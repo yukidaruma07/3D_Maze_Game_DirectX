@@ -10,5 +10,6 @@ struct PSInput
 
 float4 main(PSInput IN) : SV_Target
 {
-    return texture0.Sample(sampler0, IN.uv);
+    return IN.color;
+    //return texture0.Sample(sampler0, IN.uv);
 }

@@ -14,6 +14,7 @@ namespace DirectX3DManager {
 	inline IDXGISwapChain* swapChain_ = nullptr;
 	inline ID3D11RenderTargetView* renderTargetView_ = nullptr;
 	inline ID3D11Texture2D* texture2D_ = nullptr;
+	inline ID3D11RasterizerState* rasterizerState_ = nullptr;
 
 	void DirectX3DManager::InitDirectX3D() {
 
@@ -60,6 +61,15 @@ namespace DirectX3DManager {
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
 
+		//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_rasterizer_desc
+		D3D11_RASTERIZER_DESC rasterizerDesc = {};
+		rasterizerDesc.FillMode = D3D11_FILL_SOLID; // レンダリング時に使用する塗りつぶしモード
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		rasterizerDesc.FrontCounterClockwise = FALSE;
+
+		GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState_);
+		d3d11Context_->RSSetState(rasterizerState_);
+
 		d3d11Context_->RSSetViewports(1, &viewport);
 	}
 
@@ -79,9 +89,6 @@ namespace DirectX3DManager {
 }
 
 namespace ShaderManager {
-	inline ID3D11VertexShader* vertexShader_ = nullptr;
-	inline ID3D11PixelShader* pixelShader_ = nullptr;
-	inline ID3D11InputLayout* inputLayout_ = nullptr;
 
 	void InitShader() {
 		ID3DBlob* vsBlob = nullptr; 

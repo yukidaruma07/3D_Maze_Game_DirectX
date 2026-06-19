@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include "GameEngine.hpp"
 #include "Engine//DirectX3DManager.h"
+#include "Engine/SceneManager.h"
+#include "Engine/ObjectManager.h"
 
 #define WINDOW_CLASS_NAME "GameEngine"
 #define WINDOW_TITLE "MyGame"
@@ -25,6 +27,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	DirectX3DManager::InitDirectX3D();
 	ShaderManager::InitShader();
+	SceneManager::InitManager();
 
 	MSG msg = {};
 	while (msg.message != WM_QUIT) {
@@ -36,6 +39,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			auto renderTargetView = GetRenderTargetView();
 			GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
 			GetContext()->ClearRenderTargetView(renderTargetView, GameEngine::BACKGROUND_COLOR);
+
+			SceneManager::UpdateScene();
+			SceneManager::DrawScene();
+			ObjectManager::UpdateManager();
 
 			GetSwapChain()->Present(1, 0);
 		}

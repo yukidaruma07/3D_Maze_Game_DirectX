@@ -5,13 +5,19 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
+struct ConstantBuffer {
+	DirectX::XMMATRIX worldMat = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX viewMat = DirectX::XMMatrixIdentity();;
+	DirectX::XMMATRIX projMat = DirectX::XMMatrixIdentity();;
+};
+
 struct Color {
 	float r, g, b, a;
 
-	static Color GetRed() { return {255, 0, 0, 1}; }
-	static Color GetBlue() { return { 0, 255, 0, 1 }; }
-	static Color GetGreen() { return { 0, 0, 255, 1 }; }
-	static Color GetWhite() { return { 255, 255, 255, 1 }; }
+	static Color GetRed() { return {1.0, 0, 0, 1}; }
+	static Color GetBlue() { return { 0, 1.0, 0, 1 }; }
+	static Color GetGreen() { return { 0, 0, 1.0, 1 }; }
+	static Color GetWhite() { return { 1.0, 1.0, 1.0, 1 }; }
 	static Color GetBlack() { return { 0, 0, 0, 1 }; }
 };
 
@@ -36,5 +42,11 @@ namespace DirectX3DManager {
 
 namespace ShaderManager {
 
+	inline ID3D11VertexShader* vertexShader_ = nullptr;
+	inline ID3D11PixelShader* pixelShader_ = nullptr;
+	inline ID3D11InputLayout* inputLayout_ = nullptr;
+
 	void InitShader();
+
+
 }

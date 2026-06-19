@@ -23,6 +23,11 @@ public:
     BaseObject(const std::string& name, const bool isDead = false) {
         name_ = name;
         isDead_ = isDead;
+
+		postion_ = { 0.0f, 0.0f, 0.0f };
+		velocity_ = { 0.0f, 0.0f, 0.0f };
+		rotation_ = { 0.0f, 0.0f, 0.0f };
+		scale_ = { 1.0f, 1.0f, 1.0f };
     };
     virtual ~BaseObject() {}
 

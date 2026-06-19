@@ -1,6 +1,8 @@
 cbuffer ConstantBuffer : register(b0)
 {
-    matrix worldViewProj;
+    matrix worldMat;
+    matrix viewMat;
+    matrix projMat;
 }
 
 struct VSInput
@@ -20,7 +22,7 @@ struct VSOutput
 VSOutput main(VSInput IN)
 {
     VSOutput OUT;
-    OUT.position = mul(float4(IN.position, 1.0f), worldViewProj);
+    OUT.position = mul(float4(IN.position, 1.0f), worldMat * viewMat * projMat);
     OUT.color = IN.color;
     OUT.uv = IN.uv;
     return OUT;
