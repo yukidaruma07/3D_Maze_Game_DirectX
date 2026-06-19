@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include <vector>
 #include "BootScene.h"
+#include "ObjectManager.h"
 
 namespace {
 	std::vector<BaseScene*> sceneList;
@@ -24,7 +25,9 @@ namespace SceneManager {
 		for (auto& scene : sceneList) {
 			if (scene->GetName() == name) {
 				currentScene = scene;
+				ObjectManager::ClearObject();
 				currentScene->Init();
+				ObjectManager::InitManager();
 				break;
 			}
 		}

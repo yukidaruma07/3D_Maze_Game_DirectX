@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Engine\BootScene.cpp" />
     <ClCompile Include="Engine\DirectX3DManager.cpp" />
+    <ClCompile Include="Engine\ObjectManager.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
