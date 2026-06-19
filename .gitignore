@@ -1,0 +1,8 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/.vs/DirectX_Engine.slnx/v18
+/.vs/DirectX_Engine.slnx/FileContentIndex
+/DirectX_Engine/x64/Debug
+/x64/Debug
