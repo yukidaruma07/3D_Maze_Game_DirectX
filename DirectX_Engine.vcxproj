@@ -139,8 +139,8 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX3DManager.cpp" />
     <ClCompile Include="Engine\BootScene.cpp" />
+    <ClCompile Include="Engine\DirectX3DManager.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>

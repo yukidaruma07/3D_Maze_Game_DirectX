@@ -1,5 +1,5 @@
-#include "Engine//DirectX3DManager.h"
-#include "GameEngine.hpp"
+#include "DirectX3DManager.h"
+#include "../GameEngine.hpp"
 #include <Windows.h>
 #include <d3dcompiler.h>
 #include <d3d11.h>

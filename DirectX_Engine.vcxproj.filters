@@ -33,16 +33,13 @@
     <ClCompile Include="Engine\BootScene.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX3DManager.cpp">
+    <ClCompile Include="Engine\DirectX3DManager.cpp">
       <Filter>Engine\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEngine.hpp">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectX3DManager.h">
-      <Filter>Engine\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\InputManager.h">
       <Filter>Engine\Manager</Filter>
@@ -70,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="Engine\BaseObject.h">
       <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectX3DManager.h">
+      <Filter>Engine\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
