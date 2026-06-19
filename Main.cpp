@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include "GameEngine.hpp"
+#include "Engine//DirectX3DManager.h"
 
 #define WINDOW_CLASS_NAME "GameEngine"
 #define WINDOW_TITLE "MyGame"
@@ -9,16 +11,20 @@
 void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+using namespace DirectX3DManager;
+
 namespace GameEngine {
 	HWND hwnd = {};
 
-	inline HWND GetWindowHandle() {
+	HWND GetWindowHandle() {
 		return hwnd;
 	}
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	DirectX3DManager::InitDirectX3D();
+	ShaderManager::InitShader();
 
 	MSG msg = {};
 	while (msg.message != WM_QUIT) {
@@ -27,7 +33,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			DispatchMessage(&msg);
 		}
 		else {
+			auto renderTargetView = GetRenderTargetView();
+			GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
+			GetContext()->ClearRenderTargetView(renderTargetView, GameEngine::BACKGROUND_COLOR);
 
+			GetSwapChain()->Present(1, 0);
 		}
 	}
 
