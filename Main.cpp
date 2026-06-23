@@ -34,6 +34,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	initializeImGUI();
 	ShaderManager::InitShader();
 	SceneManager::InitManager();
+	CameraManager::addCamera("RootCamera");
+	CameraManager::setCurentCamera("RootCamera");
 
 	MSG msg = {};
 	while (msg.message != WM_QUIT) {
@@ -57,10 +59,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			#ifdef _DEBUG
 				auto currentCamera = CameraManager::getCurentCamera();
+				auto cameraPos = currentCamera->getCameraPostion();
+				auto targetPos = currentCamera->getFoucsPostion();
 				ImGui::Begin("Main");
-				ImGui::Text("Camera: %s", currentCamera == nullptr ? "" : currentCamera->getName());
+				ImGui::Text("Camera: %s", currentCamera == nullptr ? "" : currentCamera->getName().c_str());
 				if (currentCamera != nullptr) {
-					
+					ImGui::SliderFloat("CameraPosX", &cameraPos.x, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraPosY", &cameraPos.y, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraPosZ", &cameraPos.z, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraTargetX", &targetPos.x, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraTargetY", &targetPos.y, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraTargerZ", &targetPos.z, -1280.0f, 1280.0f);
+					currentCamera->setCameraPostion(cameraPos);
+					currentCamera->setFoucsPostion(targetPos);
 				}
 				ImGui::End();
 			#endif

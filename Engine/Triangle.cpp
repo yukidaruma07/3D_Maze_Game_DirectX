@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include "DirectX3DManager.h"
 #include "CameraManager.h"
+#include "../ImGUI/imgui.h"
 
 using namespace DirectX3DManager;
 using namespace DirectX;
@@ -83,6 +84,21 @@ void Triangle::Draw() {
 	context->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
 
 	context->Draw(3, 0);
+
+#ifdef _DEBUG
+	ImGui::Begin("Traiangle");
+	ImGui::SliderFloat("PosX", &postion_.x, -1280, 1280);
+	ImGui::SliderFloat("PosY", &postion_.y, -1280, 1280);
+	ImGui::SliderFloat("PosZ", &postion_.z, -1280, 1280);
+	ImGui::SliderFloat("RotationX", &rotation_.x, 0, 90);
+	ImGui::SliderFloat("RotationY", &rotation_.y, 0, 90);
+	ImGui::SliderFloat("RotationZ", &rotation_.z, 0, 90);
+	ImGui::SliderFloat("ScaleX", &scale_.x, 0, 10);
+	ImGui::SliderFloat("ScaleY", &scale_.y, 0, 10);
+	ImGui::SliderFloat("ScaleZ", &scale_.z, 0, 10);
+	ImGui::End();
+#endif 
+
 }
 
 void Triangle::Release()
