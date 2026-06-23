@@ -15,11 +15,6 @@ Triangle::Triangle(const Color& color, XMFLOAT3 verticePos[3])
 
 Triangle::Triangle(Color color[3], DirectX::XMFLOAT3 verticePos[3])
 	: BaseObject("Triangle") {
-	postion_ = verticePos[0];
-	verticePos_[0] = verticePos[0];
-	verticePos_[1] = verticePos[1];
-	verticePos_[2] = verticePos[2];
-
 	vertices_[0] = { verticePos[0], color[0], {0, 0}}; // 左上 
 	vertices_[1] = { verticePos[1], color[1], {0, 1}}; // 左下
 	vertices_[2] = { verticePos[2], color[2], {1, 0}}; // 右上
@@ -43,6 +38,14 @@ void Triangle::Init() {
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	result = GetDevice()->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer_);
 
+	//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_rasterizer_desc
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID; // レンダリング時に使用する塗りつぶしモード
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerDesc.FrontCounterClockwise = FALSE;
+
+	GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+
 	D3D11_SUBRESOURCE_DATA verticeData = {};
 	verticeData.pSysMem = vertices_;
 
@@ -65,25 +68,26 @@ void Triangle::Update() {
 	);
 
 	ConstantBuffer cb = {};
-	cb.worldMat = XMMatrixTranspose(world);
-	cb.viewMat = XMMatrixTranspose(view);
-	cb.projMat = XMMatrixTranspose(projection);
+	cb.wvpMat = XMMatrixTranspose(world * view * projection);
 	GetContext()->UpdateSubresource(constantBuffer_, 0, nullptr, &cb, 0, 0);
 }
 
 void Triangle::Draw() {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	ID3D11DeviceContext* context = GetContext();
+	ID3D11ShaderResourceView* nullSRV = nullptr;
+	GetContext()->RSSetState(rasterizerState);
+	GetContext()->PSSetShaderResources(0, 1, &nullSRV);
+	GetContext()->IASetInputLayout(ShaderManager::inputLayout_);
+	GetContext()->IASetVertexBuffers(0, 1, &vertexBuffer_, &stride, &offset);
+	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	GetContext()->VSSetShader(ShaderManager::vertexShader_, nullptr, 0);
+	GetContext()->PSSetShader(ShaderManager::pixelDebugShader_, nullptr, 0);
+	GetContext()->VSSetConstantBuffers(0, 1, &constantBuffer_);
 
-	context->IASetInputLayout(ShaderManager::inputLayout_);
-	context->VSSetConstantBuffers(0, 1, &constantBuffer_);
-	context->IASetVertexBuffers(0, 1, &vertexBuffer_, &stride, &offset);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	context->VSSetShader(ShaderManager::vertexShader_, nullptr, 0);
-	context->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
+	GetContext()->Draw(3, 0);
 
-	context->Draw(3, 0);
+	GetContext()->RSSetState(nullptr);
 
 #ifdef _DEBUG
 	ImGui::Begin("Traiangle");

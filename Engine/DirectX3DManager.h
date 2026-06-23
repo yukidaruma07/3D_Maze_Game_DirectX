@@ -6,9 +6,7 @@
 #include <DirectXMath.h>
 
 struct ConstantBuffer {
-	DirectX::XMMATRIX worldMat = DirectX::XMMatrixIdentity();
-	DirectX::XMMATRIX viewMat = DirectX::XMMatrixIdentity();;
-	DirectX::XMMATRIX projMat = DirectX::XMMatrixIdentity();;
+	DirectX::XMMATRIX wvpMat = DirectX::XMMatrixIdentity();
 };
 
 struct Color {
@@ -25,6 +23,7 @@ struct Vertex {
 	DirectX::XMFLOAT3 postion = {};
 	Color color = {};
 	DirectX::XMFLOAT2 uv = {};
+	bool has_texture = false;
 };
 
 namespace DirectX3DManager {
@@ -44,6 +43,7 @@ namespace ShaderManager {
 
 	inline ID3D11VertexShader* vertexShader_ = nullptr;
 	inline ID3D11PixelShader* pixelShader_ = nullptr;
+	inline ID3D11PixelShader* pixelDebugShader_ = nullptr;
 	inline ID3D11InputLayout* inputLayout_ = nullptr;
 
 	void InitShader();

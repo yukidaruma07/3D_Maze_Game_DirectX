@@ -12,7 +12,7 @@ using namespace DirectX3DManager;
 using namespace DirectX;
 
 Image::Image(const std::string& path, const float leftX, const float leftY)
-	: BaseObject("Image", true) {
+	: BaseObject("Image") {
 	this->path_ = path;
 
 	// DirectXでは、2個の三角形を組み合わせて描画するイメージ
@@ -178,9 +178,7 @@ void Image::Update() {
 	);
 
 	ConstantBuffer cb = {};
-	cb.worldMat = XMMatrixTranspose(world);
-	cb.viewMat = XMMatrixTranspose(view);
-	cb.projMat = XMMatrixTranspose(projection);
+	cb.wvpMat = XMMatrixTranspose(world * view * projection);
 	GetContext()->UpdateSubresource(constantBuffer_, 0, nullptr, &cb, 0, 0);
 }
 
@@ -201,6 +199,20 @@ void Image::Draw() {
 	GetContext()->Draw(6, 0);
 
 	GetContext()->RSSetState(nullptr);
+
+#ifdef _DEBUG
+	ImGui::Begin("Image");
+	ImGui::SliderFloat("PosX", &postion_.x, -1280, 1280);
+	ImGui::SliderFloat("PosY", &postion_.y, -1280, 1280);
+	ImGui::SliderFloat("PosZ", &postion_.z, -1280, 1280);
+	ImGui::SliderFloat("RotationX", &rotation_.x, 0, 90);
+	ImGui::SliderFloat("RotationY", &rotation_.y, 0, 90);
+	ImGui::SliderFloat("RotationZ", &rotation_.z, 0, 90);
+	ImGui::SliderFloat("ScaleX", &scale_.x, 0, 10);
+	ImGui::SliderFloat("ScaleY", &scale_.y, 0, 10);
+	ImGui::SliderFloat("ScaleZ", &scale_.z, 0, 10);
+	ImGui::End();
+#endif 
 }
 
 void Image::Release() {

@@ -92,7 +92,20 @@ namespace ShaderManager {
 
 	void InitShader() {
 		ID3DBlob* vsBlob = nullptr; 
+		ID3DBlob* psBlobDebug = nullptr;
 		ID3DBlob* psBlob = nullptr; 
+
+		D3DCompileFromFile(
+			L"Engine//TexturePixelShader.hlsl", //シェーダーのファイル
+			nullptr,
+			D3D_COMPILE_STANDARD_FILE_INCLUDE,
+			"main", //シェーダーのメイン関数
+			"ps_5_0", //シェーダーの種類
+			D3DCOMPILE_ENABLE_STRICTNESS, //シェーダーコンパイルオプション
+			0, //オプション
+			&psBlob, //コンパイルしたデータを指定する
+			NULL //コンパイル失敗時のデータを保存する
+		);
 
 		D3DCompileFromFile(
 			L"Engine//DebugPixelShader.hlsl", //シェーダーのファイル
@@ -102,7 +115,7 @@ namespace ShaderManager {
 			"ps_5_0", //シェーダーの種類
 			D3DCOMPILE_ENABLE_STRICTNESS, //シェーダーコンパイルオプション
 			0, //オプション
-			&psBlob, //コンパイルしたデータを指定する
+			&psBlobDebug, //コンパイルしたデータを指定する
 			NULL //コンパイル失敗時のデータを保存する
 		);
 
@@ -127,6 +140,11 @@ namespace ShaderManager {
 			psBlob->GetBufferPointer(), psBlob->GetBufferSize(),
 			NULL,
 			&pixelShader_);
+
+		DirectX3DManager::GetDevice()->CreatePixelShader(
+			psBlobDebug->GetBufferPointer(), psBlobDebug->GetBufferSize(),
+			NULL,
+			&pixelDebugShader_);
 
 		D3D11_INPUT_ELEMENT_DESC layout[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(Vertex, postion), D3D11_INPUT_PER_VERTEX_DATA, 0 },
