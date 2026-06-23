@@ -3,6 +3,7 @@
 #include "Triangle.h"
 #include "Image.h"
 #include "LoggerManager.h"
+#include "FBX.h"
 
 BootScene::BootScene()
 	: BaseScene("BootScene") {
@@ -24,6 +25,7 @@ void BootScene::Init() {
 	};
 	ObjectManager::AddObject(new Triangle(color, vertexPos));
 	ObjectManager::AddObject(new Image("test.PNG", 64, 64));
+	ObjectManager::AddObject(new FBX("Oden.fbx"));
 }
 
 void BootScene::Update() {

@@ -144,6 +144,7 @@
     <ClCompile Include="Engine\BootScene.cpp" />
     <ClCompile Include="Engine\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectX3DManager.cpp" />
+    <ClCompile Include="Engine\FBX.cpp" />
     <ClCompile Include="Engine\Image.cpp" />
     <ClCompile Include="Engine\ObjectManager.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Engine\BootScene.h" />
     <ClInclude Include="Engine\CameraManager.h" />
     <ClInclude Include="Engine\DirectX3DManager.h" />
+    <ClInclude Include="Engine\FBX.h" />
     <ClInclude Include="Engine\Image.h" />
     <ClInclude Include="Engine\InputManager.h" />
     <ClInclude Include="Engine\LoggerManager.h" />

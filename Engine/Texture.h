@@ -31,4 +31,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+
+	ID3D11SamplerState* GetSampleState() { return samplerState_; }
+	ID3D11ShaderResourceView* GetShaderReasourceView() { return shaderResourceView_; }
 };
