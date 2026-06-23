@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "Texture.h"
 #include "BaseObject.h"
 #include "BootScene.h"
 #include "../ImGUI/imgui.h"
@@ -11,7 +11,7 @@ using namespace DirectX3DManager;
 
 using namespace DirectX;
 
-Image::Image(const std::string& path, const float leftX, const float leftY)
+Texture::Texture(const std::string& path, const float leftX, const float leftY)
 	: BaseObject("Texture") {
 	this->path_ = path;
 
@@ -24,16 +24,16 @@ Image::Image(const std::string& path, const float leftX, const float leftY)
 	//  |------------|
 
 	vertices_[0] = { {0.0f, 0.0f, 0.0f}, {0,1,0,1}, {0, 0} }; // 左上 
-	vertices_[1] = { {0.0f, leftY, 0.0f }, { 1,0,0,1 }, { 0, 1 } }; // 左下
+	vertices_[1] = { {0.0f, leftY, 0.0f }, { 1,0,0,1 }, { 0, 1 }}; // 左下
 	vertices_[2] = { {leftX, 0.0f, 0.0f}, {0,0,1,1}, {1, 0} }; // 右上
 
 	vertices_[3] = { {leftX, 0.0f, 0.0f}, {0,0,1,1}, {1, 0} }; // 右上
-	vertices_[4] = { {leftX, leftY, 0.0f }, { 1,1,0,1 }, { 1, 1 } }; // 右下
+	vertices_[4] = { {leftX, leftY, 0.0f }, { 1,1,0,1 }, { 1, 1 }}; // 右下
 	vertices_[5] = { {0.0f, leftY, 0.0f}, {1,0,0,1}, {0, 1} }; // 左下
-
+	
 }
 
-void Image::Init() {
+void Texture::Init() {
 	HRESULT result = { 0 };
 	std::wstring wPath(path_.begin(), path_.end());
 
@@ -65,7 +65,7 @@ void Image::Init() {
 	//参考：https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_render_target_blend_desc
 	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.RenderTarget[0].BlendEnable = TRUE; //ブレンドを有効にする
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA; 
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
@@ -162,7 +162,7 @@ void Image::Init() {
 
 }
 
-void Image::Update() {
+void Texture::Update() {
 	Camera* camera = CameraManager::getCurentCamera();
 	if (camera == nullptr) return;
 
@@ -182,7 +182,7 @@ void Image::Update() {
 	GetContext()->UpdateSubresource(constantBuffer_, 0, nullptr, &cb, 0, 0);
 }
 
-void Image::Draw() {
+void Texture::Draw() {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
@@ -196,12 +196,12 @@ void Image::Draw() {
 	GetContext()->VSSetConstantBuffers(0, 1, &constantBuffer_);
 	GetContext()->RSSetState(rasterizerState);
 
-	GetContext()->Draw(6, 0);
+	//GetContext()->Draw(6, 0);
 
 	GetContext()->RSSetState(nullptr);
 }
 
-void Image::Release() {
+void Texture::Release() {
 	if (samplerState_ != nullptr) samplerState_->Release();
 	if (shaderResourceView_ != nullptr) shaderResourceView_->Release();
 	if (constantBuffer_ != nullptr) constantBuffer_->Release();

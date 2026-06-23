@@ -4,13 +4,12 @@
 #include <wincodec.h>
 #include <vector>
 #include "BaseObject.h"
-#include "Texture.h"
 
 /// <summary>
 /// 画像を表示するクラス
 /// </summary>
-class Image : public BaseObject {
-private:
+class Texture : public BaseObject {
+protected:
 	UINT width_, height_;
 	std::string path_;
 
@@ -26,8 +25,8 @@ private:
 	ID3D11RasterizerState* rasterizerState = nullptr;
 	Vertex vertices_[6];
 public:
-	Image(const std::string& path, const float leftX, const float leftY);
-	~Image() {};
+	Texture(const std::string& path, const float leftX, const float leftY);
+	~Texture() {};
 	void Init() override;
 	void Update() override;
 	void Draw() override;
