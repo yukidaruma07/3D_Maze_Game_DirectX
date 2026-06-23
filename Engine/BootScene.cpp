@@ -1,6 +1,7 @@
 #include "BootScene.h"
 #include "ObjectManager.h"
 #include "Triangle.h"
+#include "Image.h"
 
 BootScene::BootScene()
 	: BaseScene("BootScene") {
@@ -21,6 +22,7 @@ void BootScene::Init() {
 		Color::GetBlue()
 	};
 	ObjectManager::AddObject(new Triangle(color, vertexPos));
+	ObjectManager::AddObject(new Image("Oden.jpg", 64, 64));
 }
 
 void BootScene::Update() {

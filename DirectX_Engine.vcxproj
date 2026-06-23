@@ -111,10 +111,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.9\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.9\lib\x64\debug</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -142,6 +144,7 @@
     <ClCompile Include="Engine\BootScene.cpp" />
     <ClCompile Include="Engine\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectX3DManager.cpp" />
+    <ClCompile Include="Engine\Image.cpp" />
     <ClCompile Include="Engine\ObjectManager.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
     <ClCompile Include="Engine\Triangle.cpp" />
@@ -164,6 +167,7 @@
     <ClInclude Include="Engine\BootScene.h" />
     <ClInclude Include="Engine\CameraManager.h" />
     <ClInclude Include="Engine\DirectX3DManager.h" />
+    <ClInclude Include="Engine\Image.h" />
     <ClInclude Include="Engine\InputManager.h" />
     <ClInclude Include="Engine\LoggerManager.h" />
     <ClInclude Include="Engine\ObjectManager.h" />
