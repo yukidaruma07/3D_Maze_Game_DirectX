@@ -30,50 +30,65 @@
     <ClCompile Include="Main.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="BootScene.cpp">
+    <ClCompile Include="Engine\BootScene.cpp">
       <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectX3DManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\SceneManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ObjectManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Triangle.cpp">
+      <Filter>Engine\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEngine.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="BaseScene.h">
+    <ClInclude Include="Engine\InputManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\LoggerManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ObjectManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\SceneManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\AudioManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CameraManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseScene.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BootScene.h">
+    <ClInclude Include="Engine\BootScene.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BaseObject.h">
+    <ClInclude Include="Engine\BaseObject.h">
       <Filter>Engine\Object</Filter>
     </ClInclude>
-    <ClInclude Include="CameraManager.h">
+    <ClInclude Include="Engine\DirectX3DManager.h">
       <Filter>Engine\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoggerManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX3DManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Engine\Manager</Filter>
+    <ClInclude Include="Engine\Triangle.h">
+      <Filter>Engine\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="DebugPixelShader.hlsl">
+    <FxCompile Include="Engine\DebugPixelShader.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
-    <FxCompile Include="DebugVertexShader.hlsl">
+    <FxCompile Include="Engine\DebugVertexShader.hlsl">
       <Filter>Engine\Shader</Filter>
     </FxCompile>
   </ItemGroup>
