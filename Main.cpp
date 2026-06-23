@@ -3,6 +3,7 @@
 #include "Engine//DirectX3DManager.h"
 #include "Engine/SceneManager.h"
 #include "Engine/ObjectManager.h"
+#include "Engine/CameraManager.h"
 #include "ImGUI/imgui_impl_dx11.h"
 #include "ImGUI/imgui_impl_win32.h"
 
@@ -55,7 +56,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ObjectManager::UpdateManager();
 
 			#ifdef _DEBUG
+				auto currentCamera = CameraManager::getCurentCamera();
 				ImGui::Begin("Main");
+				ImGui::Text("Camera: %s", currentCamera == nullptr ? "" : currentCamera->getName());
+				if (currentCamera != nullptr) {
+					
+				}
 				ImGui::End();
 			#endif
 

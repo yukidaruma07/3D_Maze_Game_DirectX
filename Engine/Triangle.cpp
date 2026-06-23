@@ -1,6 +1,7 @@
 #include "Triangle.h"
 #include <DirectXMath.h>
 #include "DirectX3DManager.h"
+#include "CameraManager.h"
 
 using namespace DirectX3DManager;
 using namespace DirectX;
@@ -48,15 +49,14 @@ void Triangle::Init() {
 }
 
 void Triangle::Update() {
+	Camera* camera = CameraManager::getCurentCamera();
+	if (camera == nullptr) return;
+
 	XMMATRIX scaleMat = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
 	XMMATRIX rotMat = XMMatrixRotationZ(rotation_.z) * XMMatrixRotationX(rotation_.x) * XMMatrixRotationY(rotation_.y);
 	XMMATRIX transMat = XMMatrixTranslation(postion_.x, postion_.y, postion_.z);
 	XMMATRIX world = scaleMat * rotMat * transMat;
-	XMMATRIX view = XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
-		XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f)
-	);
+	XMMATRIX view = camera->getMatrix();
 	XMMATRIX projection = XMMatrixOrthographicOffCenterLH(
 		0.0f, 1280.0f,
 		720.0f, 0.0f,
