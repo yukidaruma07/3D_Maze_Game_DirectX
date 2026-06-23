@@ -3,6 +3,8 @@
 #include "Engine//DirectX3DManager.h"
 #include "Engine/SceneManager.h"
 #include "Engine/ObjectManager.h"
+#include "ImGUI/imgui_impl_dx11.h"
+#include "ImGUI/imgui_impl_win32.h"
 
 #define WINDOW_CLASS_NAME "GameEngine"
 #define WINDOW_TITLE "MyGame"
@@ -11,6 +13,8 @@
 #pragma comment(lib, "Winmm.lib")
 
 void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
+void initializeImGUI();
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 using namespace DirectX3DManager;
@@ -26,6 +30,7 @@ namespace GameEngine {
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	DirectX3DManager::InitDirectX3D();
+	initializeImGUI();
 	ShaderManager::InitShader();
 	SceneManager::InitManager();
 
@@ -40,9 +45,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
 			GetContext()->ClearRenderTargetView(renderTargetView, GameEngine::BACKGROUND_COLOR);
 
+			auto& io = ImGui::GetIO();
+			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+
 			SceneManager::UpdateScene();
 			SceneManager::DrawScene();
 			ObjectManager::UpdateManager();
+
+			#ifdef _DEBUG
+				ImGui::Begin("Main");
+				ImGui::End();
+			#endif
+
+			ImGui::EndFrame();
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
 
 			GetSwapChain()->Present(1, 0);
 		}
@@ -52,6 +75,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
+		return true;
+
 	switch (message) {
 	case WM_CREATE: {
 		break;
@@ -96,4 +122,18 @@ void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	ShowWindow(GameEngine::GetWindowHandle(), nCmdShow);
 	UpdateWindow(GameEngine::GetWindowHandle());
+}
+
+void initializeImGUI() {
+	HWND hwnd = GameEngine::GetWindowHandle();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(hwnd);
+	ID3D11Device* device = (ID3D11Device*)GetDevice();
+	ID3D11DeviceContext* deviceContext = (ID3D11DeviceContext*)GetContext();
+	ImGui_ImplDX11_Init(device, deviceContext);
 }

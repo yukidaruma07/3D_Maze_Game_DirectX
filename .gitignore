@@ -1,3 +1,5 @@
 /.vs
 /DirectX_Engine
 /x64
+/ImGUI
+/imgui.ini
