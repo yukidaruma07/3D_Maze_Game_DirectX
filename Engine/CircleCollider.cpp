@@ -6,6 +6,7 @@ CircleCollider::CircleCollider(BaseObject* parent, int radius)
 	: BaseObject("CircleCollider", true) {
 	this->parent_ = parent;
 	this->radius_ = radius;
+	isShowImGUI_ = false; //直接描画するわけではないため、ImGUIの表示はfalse
 }
 
 CircleCollider::~CircleCollider()

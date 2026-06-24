@@ -40,6 +40,10 @@ void ObjectManager::UpdateManager() {
             obj->Update();
             UpdateCollider();
             obj->Draw();
+            #ifdef _DEBUG
+                if (!obj->IsShowImGUI()) return;
+                obj->DrawObjectInfoImGUI();
+            #endif
         }
     }
 }

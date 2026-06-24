@@ -202,21 +202,6 @@ void FBX::Draw() {
 		GetContext()->DrawIndexed(polygonCount_ * 3, 0, 0);
 		GetContext()->RSSetState(nullptr);
 	}
-
-#ifdef _DEBUG
-	ImGui::Begin("FBX");
-	ImGui::Checkbox("texture", &isShowTexture_);
-	ImGui::SliderFloat("X", &postion_.x, -1.0f, 1.0f);
-	ImGui::SliderFloat("Y", &postion_.y, -1.0f, 1.0f);
-	ImGui::SliderFloat("Z", &postion_.z, -1.0f, 1.0f);
-	ImGui::SliderFloat("angleX", &rotation_.x, -1.0f, 1.0f);
-	ImGui::SliderFloat("angleY", &rotation_.y, -1.0f, 1.0f);
-	ImGui::SliderFloat("angleZ", &rotation_.z, -1.0f, 1.0f);
-	ImGui::SliderFloat("scaleX", &scale_.x, 0.5f, 2.0f);
-	ImGui::SliderFloat("scaleY", &scale_.y, 0.5f, 2.0f);
-	ImGui::SliderFloat("scaleZ", &scale_.z, 0.5f, 2.0f);
-	ImGui::End();
-#endif
 }
 
 void FBX::Release() {

@@ -2,6 +2,7 @@
 #include <string>
 #include <DirectXMath.h>
 #include <vector>
+#include "../ImGUI/imgui.h"
 
 class CircleCollider;
 
@@ -11,33 +12,75 @@ private:
 protected:
     std::string name_;
     bool isDead_;
+    bool isShowImGUI_;
 
     DirectX::XMFLOAT3 postion_;
     DirectX::XMFLOAT3 velocity_;
     DirectX::XMFLOAT3 rotation_;
     DirectX::XMFLOAT3 scale_;
 public:
-    virtual void Init() = 0;
-    virtual void Update() = 0;
-    virtual void Draw() = 0;
-    virtual void Release() = 0;
-
-    virtual void OnCollide(BaseObject* obj) {}
 
     BaseObject(const std::string& name, const bool isDead = false) {
         name_ = name;
         isDead_ = isDead;
 
-		postion_ = { 0.0f, 0.0f, 0.0f };
-		velocity_ = { 0.0f, 0.0f, 0.0f };
-		rotation_ = { 0.0f, 0.0f, 0.0f };
-		scale_ = { 1.0f, 1.0f, 1.0f };
+        postion_ = { 0.0f, 0.0f, 0.0f };
+        velocity_ = { 0.0f, 0.0f, 0.0f };
+        rotation_ = { 0.0f, 0.0f, 0.0f };
+        scale_ = { 1.0f, 1.0f, 1.0f };
+
+        isShowImGUI_ = true;
     };
     virtual ~BaseObject() {}
+
+    /// <summary>
+    /// オブジェクトの状態を初期化する関数（※実装必須）
+    /// </summary>
+    virtual void Init() = 0;
+
+    /// <summary>
+    /// オブジェクトの状態を更新する関数（※実装必須）
+    /// </summary>
+    virtual void Update() = 0;
+
+    /// <summary>
+    /// オブジェクトを描画する関数（※実装必須）
+    /// </summary>
+    virtual void Draw() = 0;
+
+    /// <summary>
+    /// オブジェクトのデータを開放する関数（※実装必須）
+    /// </summary>
+    virtual void Release() = 0;
+
+    /// <summary>
+    /// オブジェクトの情報をImGUIで描画する関数
+    /// </summary>
+    virtual void DrawObjectInfoImGUI() {
+        ImGui::Begin(name_.c_str());
+        ImGui::SliderFloat("X", &postion_.x, -1.0f, 1.0f);
+        ImGui::SliderFloat("Y", &postion_.y, -1.0f, 1.0f);
+        ImGui::SliderFloat("Z", &postion_.z, -1.0f, 1.0f);
+        ImGui::SliderFloat("angleX", &rotation_.x, -1.0f, 1.0f);
+        ImGui::SliderFloat("angleY", &rotation_.y, -1.0f, 1.0f);
+        ImGui::SliderFloat("angleZ", &rotation_.z, -1.0f, 1.0f);
+        ImGui::SliderFloat("scaleX", &scale_.x, 0.5f, 2.0f);
+        ImGui::SliderFloat("scaleY", &scale_.y, 0.5f, 2.0f);
+        ImGui::SliderFloat("scaleZ", &scale_.z, 0.5f, 2.0f);
+        ImGui::End();
+    }
+
+    /// <summary>
+    /// 何かと当たったかを検出する関数
+    /// </summary>
+    /// <param name="obj">当たったオブジェクト</param>
+    virtual void OnCollide(BaseObject* obj) {}
 
     std::string GetName() { return name_; };
     bool IsDead() { return isDead_; };
     void KillMe() { this->isDead_ = true; }
+    bool IsShowImGUI() { return isShowImGUI_; }
+    void SetShowImGUI(bool flag) { this->isShowImGUI_ = flag; }
 
     DirectX::XMFLOAT3 GetPosition() const { return postion_; }
     void SetPosition(const DirectX::XMFLOAT3 position) { this->postion_ = position; }

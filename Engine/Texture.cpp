@@ -30,7 +30,8 @@ Texture::Texture(const std::string& path, const float leftX, const float leftY)
 	vertices_[3] = { {leftX, 0.0f, 0.0f}, {0,0,1,1}, {1, 0} }; // 右上
 	vertices_[4] = { {leftX, leftY, 0.0f }, { 1,1,0,1 }, { 1, 1 }}; // 右下
 	vertices_[5] = { {0.0f, leftY, 0.0f}, {1,0,0,1}, {0, 1} }; // 左下
-	
+
+	isShowImGUI_ = false; //直接描画するわけではないため、ImGUIの表示はfalse
 }
 
 void Texture::Init() {

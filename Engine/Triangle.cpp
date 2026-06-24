@@ -88,21 +88,6 @@ void Triangle::Draw() {
 	GetContext()->Draw(3, 0);
 
 	GetContext()->RSSetState(nullptr);
-
-#ifdef _DEBUG
-	ImGui::Begin("Traiangle");
-	ImGui::SliderFloat("PosX", &postion_.x, -1280, 1280);
-	ImGui::SliderFloat("PosY", &postion_.y, -1280, 1280);
-	ImGui::SliderFloat("PosZ", &postion_.z, -1280, 1280);
-	ImGui::SliderFloat("RotationX", &rotation_.x, 0, 90);
-	ImGui::SliderFloat("RotationY", &rotation_.y, 0, 90);
-	ImGui::SliderFloat("RotationZ", &rotation_.z, 0, 90);
-	ImGui::SliderFloat("ScaleX", &scale_.x, 0, 10);
-	ImGui::SliderFloat("ScaleY", &scale_.y, 0, 10);
-	ImGui::SliderFloat("ScaleZ", &scale_.z, 0, 10);
-	ImGui::End();
-#endif 
-
 }
 
 void Triangle::Release()
