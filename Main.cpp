@@ -1,23 +1,41 @@
-﻿#include <Windows.h>
-#include "Engine.h"
-#define WINDOW_CLASS_NAME "Game"
-#define WINDOW_TITLE_NAME "MyGame"
+#include <Windows.h>
+#include "GameEngine.hpp"
+#include "Engine//DirectX3DManager.h"
+#include "Engine/SceneManager.h"
+#include "Engine/ObjectManager.h"
+#include "Engine/CameraManager.h"
+#include "ImGUI/imgui_impl_dx11.h"
+#include "ImGUI/imgui_impl_win32.h"
 
-using namespace GameEngine;
+#define WINDOW_CLASS_NAME "GameEngine"
+#define WINDOW_TITLE "MyGame"
+
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "Winmm.lib")
+
+void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
+void initializeImGUI();
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+using namespace DirectX3DManager;
 
 namespace GameEngine {
-	inline HWND winHWND = {};
+	HWND hwnd = {};
 
-	inline HWND GetWindowHandle() {
-		return GameEngine::winHWND;
+	HWND GetWindowHandle() {
+		return hwnd;
 	}
 }
 
-void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
-	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	DirectX3DManager::InitDirectX3D();
+	initializeImGUI();
+	ShaderManager::InitShader();
+	SceneManager::InitManager();
+	CameraManager::addCamera("RootCamera");
+	CameraManager::setCurentCamera("RootCamera");
 
 	MSG msg = {};
 	while (msg.message != WM_QUIT) {
@@ -26,12 +44,57 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			DispatchMessage(&msg);
 		}
 		else {
+			auto renderTargetView = GetRenderTargetView();
+			GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
+			GetContext()->ClearRenderTargetView(renderTargetView, GameEngine::BACKGROUND_COLOR);
 
+			auto& io = ImGui::GetIO();
+			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+
+			SceneManager::UpdateScene();
+			SceneManager::DrawScene();
+			ObjectManager::UpdateManager();
+
+			#ifdef _DEBUG
+				auto currentCamera = CameraManager::getCurentCamera();
+				auto cameraPos = currentCamera->getCameraPostion();
+				auto targetPos = currentCamera->getFoucsPostion();
+				ImGui::Begin("Main");
+				ImGui::Text("Camera: %s", currentCamera == nullptr ? "" : currentCamera->getName().c_str());
+				if (currentCamera != nullptr) {
+					ImGui::SliderFloat("CameraPosX", &cameraPos.x, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraPosY", &cameraPos.y, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraPosZ", &cameraPos.z, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraTargetX", &targetPos.x, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraTargetY", &targetPos.y, -1280.0f, 1280.0f);
+					ImGui::SliderFloat("CameraTargerZ", &targetPos.z, -1280.0f, 1280.0f);
+					currentCamera->setCameraPostion(cameraPos);
+					currentCamera->setFoucsPostion(targetPos);
+				}
+				ImGui::End();
+			#endif
+
+			ImGui::EndFrame();
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
+
+			GetSwapChain()->Present(1, 0);
 		}
 	}
+
+	return 0;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
+		return true;
+
 	switch (message) {
 	case WM_CREATE: {
 		break;
@@ -47,7 +110,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
 	//WNDCLASSEXWの参考：https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/ns-winuser-wndclassexw
 	WNDCLASSEX wndClass = {};
 	wndClass.cbSize = sizeof(WNDCLASSEX); //構造体のサイズ
@@ -61,18 +125,32 @@ void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	RegisterClassEx(&wndClass); //ウインドウクラスを登録する関数
 
 	//CreateWindowの参考：https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-createwindoww
-	GameEngine::winHWND = CreateWindow(
+	GameEngine::hwnd = CreateWindow(
 		WINDOW_CLASS_NAME, //クラスの名前（※WNDCLASSEXと同じクラス名を指定する）
-		WINDOW_TITLE_NAME, //ウインドウの名前
+		WINDOW_TITLE, //ウインドウの名前
 		WS_OVERLAPPEDWINDOW, //ウインドウスタイル（参考：https://learn.microsoft.com/ja-jp/windows/win32/winmsg/window-styles）
 		CW_USEDEFAULT, CW_USEDEFAULT, //ウインドウのX座標＆Y座標
-		DEFAULT_WIDTH, DEFAULT_HEIGHT, //ウインドウの幅＆高さ
+		CW_USEDEFAULT, CW_USEDEFAULT, //ウインドウの幅＆高さ
 		NULL, //親ウインドウ（※親ウインドウがいない場合はNULLで問題ない）
 		NULL, //メニューのハンドル（※メニューがない場合はNULLで問題ない）
 		hInstance, //インスタンス
 		NULL //パラメータ
 	);
 
-	ShowWindow(GameEngine::GetWindowHandle(), nShowCmd);
+	ShowWindow(GameEngine::GetWindowHandle(), nCmdShow);
 	UpdateWindow(GameEngine::GetWindowHandle());
+}
+
+void initializeImGUI() {
+	HWND hwnd = GameEngine::GetWindowHandle();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(hwnd);
+	ID3D11Device* device = (ID3D11Device*)GetDevice();
+	ID3D11DeviceContext* deviceContext = (ID3D11DeviceContext*)GetContext();
+	ImGui_ImplDX11_Init(device, deviceContext);
 }
