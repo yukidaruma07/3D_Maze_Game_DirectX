@@ -25,9 +25,14 @@ using namespace DirectX3DManager;
 
 namespace GameEngine {
 	HWND hwnd = {};
+	float deltaTime = 0.0f;
 
 	HWND GetWindowHandle() {
 		return hwnd;
+	}
+
+	float GetDeltaTime() {
+		return deltaTime;
 	}
 }
 
@@ -54,6 +59,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
 			GetContext()->ClearRenderTargetView(renderTargetView, GameEngine::BACKGROUND_COLOR);
 
+			static DWORD beforeTime = timeGetTime();
+			DWORD now = timeGetTime();
+			DWORD subt = now - beforeTime;
+
+			beforeTime = now;
+			GameEngine::deltaTime = (float)subt / 1000;
+
 			auto& io = ImGui::GetIO();
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
@@ -70,6 +82,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				auto cameraPos = currentCamera->getCameraPostion();
 				auto targetPos = currentCamera->getFoucsPostion();
 				ImGui::Begin("Main");
+				ImGui::Text("DeltaTime: %2.2f", GameEngine::GetDeltaTime());
 				ImGui::Text("Camera: %s", currentCamera == nullptr ? "" : currentCamera->getName().c_str());
 				if (currentCamera != nullptr) {
 					ImGui::SliderFloat("CameraPosX", &cameraPos.x, -1280.0f, 1280.0f);
