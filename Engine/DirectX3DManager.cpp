@@ -86,6 +86,8 @@ namespace DirectX3DManager {
 
 	ID3D11Texture2D* DirectX3DManager::GetTexture2D() { return texture2D_; }
 
+	ID3D11RasterizerState* DirectX3DManager::GetRasterizer() { return rasterizerState_; }
+
 }
 
 namespace ShaderManager {

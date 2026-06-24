@@ -9,7 +9,6 @@ private:
     Color color_ = {};
     ID3D11Buffer* vertexBuffer_ = nullptr;
     ID3D11Buffer* constantBuffer_ = nullptr;
-    ID3D11RasterizerState* rasterizerState = nullptr;
     Vertex vertices_[6] = {};
 public:
     Box(const Color& color, float width, float height);

@@ -8,7 +8,6 @@ private:
     Color color_[3] = {};
     ID3D11Buffer* vertexBuffer_ = nullptr;
     ID3D11Buffer* constantBuffer_ = nullptr;
-    ID3D11RasterizerState* rasterizerState = nullptr;
     Vertex vertices_[3] = {};
 public:
     Triangle(const Color& color, DirectX::XMFLOAT3 postion[3]);

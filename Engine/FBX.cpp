@@ -192,13 +192,8 @@ void FBX::Draw() {
 		}
 
 		GetContext()->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
-		D3D11_RASTERIZER_DESC rasterizerDesc = {};
-		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-		rasterizerDesc.CullMode = D3D11_CULL_NONE;
-		rasterizerDesc.FrontCounterClockwise = FALSE;
-		ID3D11RasterizerState* rasterizerState = nullptr;
-		GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-		GetContext()->RSSetState(rasterizerState);
+
+		GetContext()->RSSetState(GetRasterizer());
 		GetContext()->DrawIndexed(polygonCount_ * 3, 0, 0);
 		GetContext()->RSSetState(nullptr);
 	}

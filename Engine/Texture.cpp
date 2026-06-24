@@ -76,14 +76,6 @@ void Texture::Init() {
 
 	GetDevice()->CreateBlendState(&blendDesc, &blendState); //ブレンドステートを作成する
 
-	//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_rasterizer_desc
-	D3D11_RASTERIZER_DESC rasterizerDesc = {};
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID; // レンダリング時に使用する塗りつぶしモード
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.FrontCounterClockwise = FALSE;
-
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-
 	//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_texture2d_desc
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = width_;
@@ -187,6 +179,7 @@ void Texture::Draw() {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
+	GetContext()->RSSetState(GetRasterizer());
 	GetContext()->IASetInputLayout(ShaderManager::inputLayout_);
 	GetContext()->IASetVertexBuffers(0, 1, &vertexBuffer_, &stride, &offset);
 	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -195,7 +188,6 @@ void Texture::Draw() {
 	GetContext()->PSSetShaderResources(0, 1, &shaderResourceView_);
 	GetContext()->PSSetSamplers(0, 1, &samplerState_);
 	GetContext()->VSSetConstantBuffers(0, 1, &constantBuffer_);
-	GetContext()->RSSetState(rasterizerState);
 
 	//GetContext()->Draw(6, 0);
 
@@ -212,5 +204,4 @@ void Texture::Release() {
 	if (pFrame != nullptr) pFrame->Release();
 	if (pConverter != nullptr) pConverter->Release();
 	if (blendState != nullptr) blendState->Release();
-	if (rasterizerState != nullptr) rasterizerState->Release();
 }

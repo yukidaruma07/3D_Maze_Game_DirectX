@@ -38,6 +38,7 @@ namespace DirectX3DManager {
 	IDXGISwapChain* GetSwapChain();
 	ID3D11RenderTargetView* GetRenderTargetView();
 	ID3D11Texture2D* GetTexture2D();
+	ID3D11RasterizerState* GetRasterizer();
 
 }
 

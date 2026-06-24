@@ -23,7 +23,6 @@ private:
 	IWICBitmapFrameDecode* pFrame = nullptr;
 	IWICFormatConverter* pConverter = nullptr;
 	ID3D11BlendState* blendState = nullptr;
-	ID3D11RasterizerState* rasterizerState = nullptr;
 	Vertex vertices_[6];
 public:
 	Image(const std::string& path, const float leftX, const float leftY);

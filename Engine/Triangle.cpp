@@ -38,14 +38,6 @@ void Triangle::Init() {
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	result = GetDevice()->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer_);
 
-	//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_rasterizer_desc
-	D3D11_RASTERIZER_DESC rasterizerDesc = {};
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID; // レンダリング時に使用する塗りつぶしモード
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.FrontCounterClockwise = FALSE;
-
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-
 	D3D11_SUBRESOURCE_DATA verticeData = {};
 	verticeData.pSysMem = vertices_;
 
@@ -76,7 +68,7 @@ void Triangle::Draw() {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	ID3D11ShaderResourceView* nullSRV = nullptr;
-	GetContext()->RSSetState(rasterizerState);
+	GetContext()->RSSetState(GetRasterizer());
 	GetContext()->PSSetShaderResources(0, 1, &nullSRV);
 	GetContext()->IASetInputLayout(ShaderManager::inputLayout_);
 	GetContext()->IASetVertexBuffers(0, 1, &vertexBuffer_, &stride, &offset);
