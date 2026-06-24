@@ -141,6 +141,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\AudioManager.cpp" />
     <ClCompile Include="Engine\BootScene.cpp" />
     <ClCompile Include="Engine\CameraManager.cpp" />
     <ClCompile Include="Engine\DirectX3DManager.cpp" />

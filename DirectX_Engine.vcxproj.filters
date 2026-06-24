@@ -1,54 +1,147 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{d8b3bc78-8331-46f5-b290-7896cf515db5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Manager">
-      <UniqueIdentifier>{337aedb3-1682-4380-b1d2-383fc30487fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{80901772-2ed5-43b1-8d24-9dfa58d5db5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Scene">
-      <UniqueIdentifier>{4a850ef3-5cc6-49f6-99bc-41c0066d1f82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Object">
-      <UniqueIdentifier>{a21e9c37-db4c-435d-84e6-e8ee561e564b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Data">
-      <UniqueIdentifier>{85c2a9eb-6d10-4adc-9e89-df84f78dad6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Shader">
-      <UniqueIdentifier>{46f752e3-ad4c-49dd-9044-98de24d18457}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Library">
-      <UniqueIdentifier>{ff7380dc-7657-4dc5-a865-1ecdbdce9b32}</UniqueIdentifier>
-    </Filter>
+    <FxCompile Include="Engine\DebugPixelShader.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\DebugVertexShader.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\TexturePixelShader.hlsl">
+      <Filter>Engine\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Engine</Filter>
+    <ClCompile Include="ImGUI\imgui.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_demo.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_draw.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_dx9.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_dx10.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_dx11.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_dx12.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_impl_win32.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_tables.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGUI\imgui_widgets.cpp">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DirectX3DManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CameraManager.cpp">
+      <Filter>Engine\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\BootScene.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectX3DManager.cpp">
+    <ClCompile Include="Engine\FBX.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Image.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Triangle.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\ObjectManager.cpp">
       <Filter>Engine\Manager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\SceneManager.cpp">
       <Filter>Engine\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\ObjectManager.cpp">
-      <Filter>Engine\Manager</Filter>
+    <ClCompile Include="Main.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Triangle.cpp">
-      <Filter>Engine\Object</Filter>
+    <ClCompile Include="Engine\AudioManager.cpp">
+      <Filter>Engine\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameEngine.hpp">
-      <Filter>Engine</Filter>
+    <ClInclude Include="ImGUI\imgui.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_android.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_dx9.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_dx10.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_dx11.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_dx12.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_impl_win32.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imgui_internal.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imstb_rectpack.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imstb_textedit.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imstb_truetype.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectX3DManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CameraManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BaseObject.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BootScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\AudioManager.h">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\FBX.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Image.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGUI\imconfig.h">
+      <Filter>Engine\Library\ImGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Triangle.h">
+      <Filter>Engine\Object</Filter>
     </ClInclude>
     <ClInclude Include="Engine\InputManager.h">
       <Filter>Engine\Manager</Filter>
@@ -62,34 +155,31 @@
     <ClInclude Include="Engine\SceneManager.h">
       <Filter>Engine\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\AudioManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\CameraManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\BaseScene.h">
-      <Filter>Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\BootScene.h">
-      <Filter>Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\BaseObject.h">
-      <Filter>Engine\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectX3DManager.h">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Triangle.h">
-      <Filter>Engine\Object</Filter>
+    <ClInclude Include="GameEngine.hpp">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\DebugPixelShader.hlsl">
-      <Filter>Engine\Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="Engine\DebugVertexShader.hlsl">
-      <Filter>Engine\Shader</Filter>
-    </FxCompile>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{371c8e8c-e720-443e-9579-3efe10b5ad02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager">
+      <UniqueIdentifier>{e2385174-1b31-4dfa-8129-9497a9229256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Object">
+      <UniqueIdentifier>{33328eda-2e51-4a4c-a101-45f94922572a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shader">
+      <UniqueIdentifier>{e1cd4e67-724b-4acd-ac63-50d6818d56da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Library">
+      <UniqueIdentifier>{50d4d22b-5b2b-493c-928c-3aa263995959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Library\ImGUI">
+      <UniqueIdentifier>{19683f9d-0adc-4f9b-bf4a-a45a0dd222ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{501adf3f-be7b-482f-84fe-f81ab2ceef17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

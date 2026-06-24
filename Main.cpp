@@ -4,6 +4,7 @@
 #include "Engine/SceneManager.h"
 #include "Engine/ObjectManager.h"
 #include "Engine/CameraManager.h"
+#include "Engine/AudioManager.h"
 #include "ImGUI/imgui_impl_dx11.h"
 #include "ImGUI/imgui_impl_win32.h"
 
@@ -34,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	initializeImGUI();
 	ShaderManager::InitShader();
 	SceneManager::InitManager();
+	AudioManager::InitManager();
 	CameraManager::addCamera("RootCamera");
 	CameraManager::setCurentCamera("RootCamera");
 
