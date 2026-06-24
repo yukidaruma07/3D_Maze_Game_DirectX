@@ -145,13 +145,18 @@ void initializeWindow(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH); //背景
 	RegisterClassEx(&wndClass); //ウインドウクラスを登録する関数
 
+	int width = GetPrivateProfileInt("SCREEN", "Width", GameEngine::DEFAULT_WIDTH, "./config.ini");
+	int height = GetPrivateProfileInt("SCREEN", "Height", GameEngine::DEFAULT_HEIGHT, "./config.ini");
+	char title[64] = {};
+	GetPrivateProfileString("SCREEN", "Title", WINDOW_TITLE, title, 64, "./config.ini");
+
 	//CreateWindowの参考：https://learn.microsoft.com/ja-jp/windows/win32/api/winuser/nf-winuser-createwindoww
 	GameEngine::hwnd = CreateWindow(
 		WINDOW_CLASS_NAME, //クラスの名前（※WNDCLASSEXと同じクラス名を指定する）
-		WINDOW_TITLE, //ウインドウの名前
+		title, //ウインドウの名前
 		WS_OVERLAPPEDWINDOW, //ウインドウスタイル（参考：https://learn.microsoft.com/ja-jp/windows/win32/winmsg/window-styles）
 		CW_USEDEFAULT, CW_USEDEFAULT, //ウインドウのX座標＆Y座標
-		CW_USEDEFAULT, CW_USEDEFAULT, //ウインドウの幅＆高さ
+		width, height, //ウインドウの幅＆高さ
 		NULL, //親ウインドウ（※親ウインドウがいない場合はNULLで問題ない）
 		NULL, //メニューのハンドル（※メニューがない場合はNULLで問題ない）
 		hInstance, //インスタンス
