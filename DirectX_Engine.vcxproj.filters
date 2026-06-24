@@ -75,6 +75,9 @@
     <ClCompile Include="Engine\AudioManager.cpp">
       <Filter>Engine\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\InputManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGUI\imgui.h">

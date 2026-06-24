@@ -5,6 +5,7 @@
 #include "Engine/ObjectManager.h"
 #include "Engine/CameraManager.h"
 #include "Engine/AudioManager.h"
+#include "Engine/InputManager.h"
 #include "ImGUI/imgui_impl_dx11.h"
 #include "ImGUI/imgui_impl_win32.h"
 
@@ -31,6 +32,7 @@ namespace GameEngine {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	InputManager::initialize(hInstance, GameEngine::GetWindowHandle());
 	DirectX3DManager::InitDirectX3D();
 	initializeImGUI();
 	ShaderManager::InitShader();
