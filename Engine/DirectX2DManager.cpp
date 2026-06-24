@@ -6,6 +6,10 @@
 
 namespace DirectX2DManager {
 
+	inline ID2D1Factory* factory = nullptr;
+	inline IDWriteFactory* writeFactory = nullptr;
+	inline ID2D1RenderTarget* renderTarget = nullptr;
+
 	inline const WCHAR* DEFAULT_FONT = L"メイリオ";
 	inline int DEFAULT_FONT_SIZE = 30;
 	inline D2D1_COLOR_F DEFAULT_COLOR = D2D1::ColorF(1.0, 1.0, 1.0, 1.0);

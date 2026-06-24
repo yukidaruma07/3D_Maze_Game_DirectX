@@ -8,11 +8,10 @@
 #pragma comment(lib, "d2d1.lib") 
 #pragma comment(lib, "dwrite.lib")
 
+/// <summary>
+/// Direct2Dに関する名前空間
+/// </summary>
 namespace DirectX2DManager {
-	inline ID2D1Factory* factory = nullptr;
-	inline IDWriteFactory* writeFactory = nullptr;
-	inline ID2D1RenderTarget* renderTarget = nullptr;
-
 	void Init();
 	void DrawFontText(int x, int y, std::wstring text);
 }
