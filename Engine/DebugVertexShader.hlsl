@@ -1,6 +1,8 @@
 cbuffer ConstantBuffer : register(b0)
 {
     matrix wvpMat;
+    float4 diffUse;
+    bool isTexture;
 }
 
 struct VSInput
@@ -21,7 +23,7 @@ VSOutput main(VSInput IN)
 {
     VSOutput OUT;
     OUT.position = mul(float4(IN.position, 1.0f), wvpMat);
-    OUT.color = IN.color;
+    OUT.color = diffUse;
     OUT.uv = IN.uv;
     return OUT;
 }

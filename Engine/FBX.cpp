@@ -129,6 +129,10 @@ void FBX::InitMaterial(fbxsdk::FbxNode* node) {
 		FbxSurfaceMaterial* material = node->GetMaterial(i);
 		FbxProperty property = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
 		int fileTextureCount = property.GetSrcObjectCount <FbxFileTexture>();
+		FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)node->GetMaterial(i);
+		FbxDouble3  diffuse = pMaterial->Diffuse;
+		materials_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+
 		if (fileTextureCount > 0) {
 			FbxFileTexture* textureInfo = property.GetSrcObject<FbxFileTexture>();
 			const char* texturePath = textureInfo->GetFileName();
@@ -150,13 +154,20 @@ void FBX::Update() {
 	XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
 	ConstantBuffer cb = {};
-	cb.wvpMat = XMMatrixTranspose(world * view * projection);
-	GetContext()->UpdateSubresource(pConstantBuffer_, 0, nullptr, &cb, 0, 0);
+	for (int i = 0; i < materialCount_; i++) {
+		auto material = materials_[i];
+		cb.wvpMat = XMMatrixTranspose(world * view * projection);
+		cb.diffUse = material.diffuse;
+		cb.isTexture = material.texture != nullptr ? TRUE : FALSE;
+		GetContext()->UpdateSubresource(pConstantBuffer_, 0, nullptr, &cb, 0, 0);
+	}
+
 }
 
 void FBX::Draw() {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
+	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 
 	GetContext()->VSSetShader(ShaderManager::vertexShader_, nullptr, 0);
 	GetContext()->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
@@ -164,9 +175,8 @@ void FBX::Draw() {
 	GetContext()->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
 	for (int i = 0; i < materialCount_; i++) {
 		if (!isShowTexture_) {
-			ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 			GetContext()->PSSetShaderResources(0, 1, nullSRV);
-			continue;
+			GetContext()->PSSetShader(ShaderManager::pixelDebugShader_, nullptr, 0);
 		}
 		else {
 			if (materials_[i].texture != nullptr) {
@@ -176,18 +186,22 @@ void FBX::Draw() {
 				GetContext()->PSSetShaderResources(0, 1, &srv);
 				GetContext()->PSSetSamplers(0, 1, &samplerState);
 			}
+			else {
+				GetContext()->PSSetShaderResources(0, 1, nullSRV);
+			}
 		}
+
+		GetContext()->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
+		D3D11_RASTERIZER_DESC rasterizerDesc = {};
+		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		rasterizerDesc.FrontCounterClockwise = FALSE;
+		ID3D11RasterizerState* rasterizerState = nullptr;
+		GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+		GetContext()->RSSetState(rasterizerState);
+		GetContext()->DrawIndexed(polygonCount_ * 3, 0, 0);
+		GetContext()->RSSetState(nullptr);
 	}
-	GetContext()->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
-	D3D11_RASTERIZER_DESC rasterizerDesc = {};
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.FrontCounterClockwise = FALSE;
-	ID3D11RasterizerState* rasterizerState = nullptr;
-	GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
-	GetContext()->RSSetState(rasterizerState);
-	GetContext()->DrawIndexed(polygonCount_ * 3, 0, 0);
-	GetContext()->RSSetState(nullptr);
 
 #ifdef _DEBUG
 	ImGui::Begin("FBX");

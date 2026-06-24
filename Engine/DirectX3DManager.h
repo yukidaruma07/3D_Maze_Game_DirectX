@@ -7,6 +7,8 @@
 
 struct ConstantBuffer {
 	DirectX::XMMATRIX wvpMat = DirectX::XMMatrixIdentity();
+	DirectX::XMFLOAT4 diffUse = {};
+	bool isTexture;
 };
 
 struct Color {

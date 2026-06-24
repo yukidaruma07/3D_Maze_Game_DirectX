@@ -12,6 +12,7 @@
 
 struct MATERIAL {
 	Texture* texture;
+	DirectX::XMFLOAT4	diffuse;
 };
 
 /// <summary>
