@@ -15,6 +15,7 @@ namespace DirectX3DManager {
 	inline ID3D11RenderTargetView* renderTargetView_ = nullptr;
 	inline ID3D11Texture2D* texture2D_ = nullptr;
 	inline ID3D11RasterizerState* rasterizerState_ = nullptr;
+	inline ID3D11BlendState* blendState = nullptr;
 
 	void DirectX3DManager::InitDirectX3D() {
 
@@ -71,6 +72,27 @@ namespace DirectX3DManager {
 		d3d11Context_->RSSetState(rasterizerState_);
 
 		d3d11Context_->RSSetViewports(1, &viewport);
+
+		//参考：https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_render_target_blend_desc
+		D3D11_BLEND_DESC blendDesc = {};
+		blendDesc.RenderTarget[0].BlendEnable = TRUE; //ブレンドを有効にする
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+		GetDevice()->CreateBlendState(&blendDesc, &blendState); //ブレンドステートを作成する
+
+		float blendFactor[4] = { 0, 0, 0, 0 };
+
+		GetContext()->OMSetBlendState(
+			blendState,
+			blendFactor,
+			0xFFFFFFFF
+		);
 	}
 
 	void DirectX3DManager::Release() {

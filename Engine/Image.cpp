@@ -62,19 +62,6 @@ void Image::Init() {
 	);
 	pConverter->GetSize(&width_, &height_);
 
-	//参考：https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_render_target_blend_desc
-	D3D11_BLEND_DESC blendDesc = {};
-	blendDesc.RenderTarget[0].BlendEnable = TRUE; //ブレンドを有効にする
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-	GetDevice()->CreateBlendState(&blendDesc, &blendState); //ブレンドステートを作成する
-
 	//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_texture2d_desc
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = width_;
@@ -143,15 +130,6 @@ void Image::Init() {
 	GetDevice()->CreateBuffer(&constantBufferDesc, nullptr, &constantBuffer_);
 
 	GetDevice()->CreateBuffer(&bufferDesc, &bufferData, &vertexBuffer_);
-
-	float blendFactor[4] = { 0, 0, 0, 0 };
-
-	GetContext()->OMSetBlendState(
-		blendState,
-		blendFactor,
-		0xFFFFFFFF
-	);
-
 }
 
 void Image::Update() {
@@ -202,5 +180,4 @@ void Image::Release() {
 	if (pDecoder != nullptr) pDecoder->Release();
 	if (pFrame != nullptr) pFrame->Release();
 	if (pConverter != nullptr) pConverter->Release();
-	if (blendState != nullptr) blendState->Release();
 }

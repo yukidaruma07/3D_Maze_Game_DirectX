@@ -21,7 +21,6 @@ protected:
 	IWICBitmapDecoder* pDecoder = nullptr;
 	IWICBitmapFrameDecode* pFrame = nullptr;
 	IWICFormatConverter* pConverter = nullptr;
-	ID3D11BlendState* blendState = nullptr;
 	Vertex vertices_[6];
 public:
 	Texture(const std::string& path, const float leftX, const float leftY);
