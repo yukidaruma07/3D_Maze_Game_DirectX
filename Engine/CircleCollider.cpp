@@ -1,0 +1,42 @@
+#include "CircleCollider.h"
+
+using namespace DirectX;
+
+CircleCollider::CircleCollider(BaseObject* parent, int radius)
+	: BaseObject("CircleCollider", true) {
+	this->parent_ = parent;
+	this->radius_ = radius;
+}
+
+CircleCollider::~CircleCollider()
+{
+}
+
+void CircleCollider::Init()
+{
+}
+
+void CircleCollider::Update()
+{
+	postion_ = parent_->GetPosition();
+}
+
+void CircleCollider::Draw()
+{
+}
+
+void CircleCollider::Release()
+{
+}
+
+bool CircleCollider::IsCircle(CircleCollider* circleCol) {
+	XMFLOAT3 aPos = GetPosition();
+	XMFLOAT3 bPos = circleCol->GetPosition();
+	XMVECTOR vectorA = XMLoadFloat3(&aPos);
+	XMVECTOR vectorB = XMLoadFloat3(&bPos);
+
+	if (XMVectorGetX(XMVector2Length(vectorA - vectorB)) < radius_ + circleCol->GetRadius()) {
+		return true;
+	}
+	return false;
+}

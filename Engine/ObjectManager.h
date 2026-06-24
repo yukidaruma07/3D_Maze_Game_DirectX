@@ -10,6 +10,7 @@ namespace ObjectManager {
     void RemoveObject(BaseObject* obj);
     void ClearObject();
     void UpdateManager();
+    void UpdateCollider();
 
     template<class T> T* GetDrawObject() {
         for (BaseObject* obj : objList) {

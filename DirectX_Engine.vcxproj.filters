@@ -78,6 +78,9 @@
     <ClCompile Include="Engine\InputManager.cpp">
       <Filter>Engine\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\CircleCollider.cpp">
+      <Filter>Engine\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGUI\imgui.h">
@@ -160,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="GameEngine.hpp">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CircleCollider.h">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collider.h">
+      <Filter>Engine\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

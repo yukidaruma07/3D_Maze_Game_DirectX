@@ -1,9 +1,13 @@
 #pragma once
 #include <string>
 #include <DirectXMath.h>
+#include <vector>
+
+class CircleCollider;
 
 class BaseObject {
 private:
+    std::vector<CircleCollider*> colliderList;
 protected:
     std::string name_;
     bool isDead_;
@@ -43,4 +47,6 @@ public:
     void SetRotation(const DirectX::XMFLOAT3 rotation) { this->rotation_ = rotation; }
     DirectX::XMFLOAT3 GetScale() const { return scale_; }
     void SetScale(const DirectX::XMFLOAT3 scale) { this->scale_ = scale; }
+
+    std::vector<CircleCollider*>& GetColiderList() { return colliderList; }
 };
