@@ -81,6 +81,9 @@
     <ClCompile Include="Engine\CircleCollider.cpp">
       <Filter>Engine\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectX2DManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGUI\imgui.h">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Collider.h">
       <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectX2DManager.h">
+      <Filter>Engine\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

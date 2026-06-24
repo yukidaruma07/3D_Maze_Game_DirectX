@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 #include "GameEngine.hpp"
 #include "Engine//DirectX3DManager.h"
 #include "Engine/SceneManager.h"
@@ -6,6 +6,7 @@
 #include "Engine/CameraManager.h"
 #include "Engine/AudioManager.h"
 #include "Engine/InputManager.h"
+#include "Engine/DirectX2DManager.h"
 #include "ImGUI/imgui_impl_dx11.h"
 #include "ImGUI/imgui_impl_win32.h"
 
@@ -35,6 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	InputManager::initialize(hInstance, GameEngine::GetWindowHandle());
 	DirectX3DManager::InitDirectX3D();
 	initializeImGUI();
+	DirectX2DManager::Init();
 	ShaderManager::InitShader();
 	SceneManager::InitManager();
 	AudioManager::InitManager();
@@ -62,6 +64,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ObjectManager::UpdateManager();
 
 			#ifdef _DEBUG
+				DirectX2DManager::DrawFontText(0, 0, L"あああ");
+
 				auto currentCamera = CameraManager::getCurentCamera();
 				auto cameraPos = currentCamera->getCameraPostion();
 				auto targetPos = currentCamera->getFoucsPostion();
