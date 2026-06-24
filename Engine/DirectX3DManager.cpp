@@ -20,18 +20,19 @@ namespace DirectX3DManager {
 	void DirectX3DManager::InitDirectX3D() {
 
 		//参考：https://learn.microsoft.com/ja-jp/windows/win32/api/dxgi/ns-dxgi-dxgi_swap_chain_desc
+		// スワップチェインの設定
 		DXGI_SWAP_CHAIN_DESC desc = {};
-		desc.BufferDesc.Width = GameEngine::DEFAULT_WIDTH;
-		desc.BufferDesc.Height = GameEngine::DEFAULT_HEIGHT;
-		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.BufferDesc.RefreshRate.Numerator = 60;
-		desc.BufferDesc.RefreshRate.Denominator = 1;
-		desc.Windowed = TRUE;
-		desc.OutputWindow = GameEngine::GetWindowHandle();
+		desc.BufferDesc.Width = GameEngine::DEFAULT_WIDTH;		// 画面幅
+		desc.BufferDesc.Height = GameEngine::DEFAULT_HEIGHT;	// 画面の高さ
+		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// 
+		desc.BufferDesc.RefreshRate.Numerator = 60;				// リフレッシュレートの分子 （※60/1FPSなら、60を指定する）
+		desc.BufferDesc.RefreshRate.Denominator = 1;			// リフレッシュレートの分母（※60/1FPSなら、1を指定する）
+		desc.Windowed = TRUE;									// ウインドウモードであるかどうか
+		desc.OutputWindow = GameEngine::GetWindowHandle();		// 出力するウインドウ
 		desc.BufferCount = 1;
 		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		desc.SampleDesc.Count = 1;
-		desc.SampleDesc.Quality = 0;
+		desc.SampleDesc.Count = 1;								// ピクセルあたりのサンプル数
+		desc.SampleDesc.Quality = 0;							// 品質レベル
 
 		//参考：https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/nf-d3d11-d3d11createdeviceandswapchain
 		D3D_FEATURE_LEVEL level = {};
@@ -54,13 +55,15 @@ namespace DirectX3DManager {
 		d3d11Device_->CreateRenderTargetView(texture2D_, NULL, &renderTargetView_);
 
 		//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_viewport
+		// ビューポート：描画する範囲的なもの
 		D3D11_VIEWPORT viewport = {};
-		viewport.Width = GameEngine::DEFAULT_WIDTH;
-		viewport.Height = GameEngine::DEFAULT_HEIGHT;
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
+		viewport.Width = GameEngine::DEFAULT_WIDTH;		// 描画範囲の幅
+		viewport.Height = GameEngine::DEFAULT_HEIGHT;	// 描画範囲の高さ
+		viewport.MinDepth = 0.0f;						// 描画範囲のZ軸の最小深さ
+		viewport.MaxDepth = 1.0f;						// 描画範囲のZ軸の最大深さ
+		viewport.TopLeftX = 0;							// 描画範囲の左上のX座標
+		viewport.TopLeftY = 0;							// 描画範囲の左上のY座標
+		d3d11Context_->RSSetViewports(1, &viewport);	// ビューポートを設定する
 
 		//参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_rasterizer_desc
 		D3D11_RASTERIZER_DESC rasterizerDesc = {};
@@ -70,8 +73,6 @@ namespace DirectX3DManager {
 
 		GetDevice()->CreateRasterizerState(&rasterizerDesc, &rasterizerState_);
 		d3d11Context_->RSSetState(rasterizerState_);
-
-		d3d11Context_->RSSetViewports(1, &viewport);
 
 		//参考：https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_render_target_blend_desc
 		D3D11_BLEND_DESC blendDesc = {};
@@ -170,6 +171,7 @@ namespace ShaderManager {
 			NULL,
 			&pixelDebugShader_);
 
+		/// 参考：https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_input_element_desc
 		D3D11_INPUT_ELEMENT_DESC layout[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(Vertex, postion), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, color),    D3D11_INPUT_PER_VERTEX_DATA, 0 },

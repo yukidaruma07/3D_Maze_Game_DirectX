@@ -5,12 +5,18 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
+/// <summary>
+/// GPU（シェーダ）に送る構造体
+/// </summary>
 struct ConstantBuffer {
-	DirectX::XMMATRIX wvpMat = DirectX::XMMatrixIdentity();
-	DirectX::XMFLOAT4 diffUse = {};
-	bool isTexture;
+	DirectX::XMMATRIX wvpMat = DirectX::XMMatrixIdentity(); /// World行列、View行列、Projection行列を合わせた行列
+	DirectX::XMFLOAT4 diffUse = {};							/// マテリアルの色
+	bool isTexture;											/// テクスチャがあるか
 };
 
+/// <summary>
+/// 色の構造体（※0～1.0の範囲）
+/// </summary>
 struct Color {
 	float r, g, b, a;
 
@@ -21,13 +27,18 @@ struct Color {
 	static Color GetBlack() { return { 0, 0, 0, 1 }; }
 };
 
+/// <summary>
+/// 頂点の構造体
+/// </summary>
 struct Vertex {
-	DirectX::XMFLOAT3 postion = {};
-	Color color = {};
-	DirectX::XMFLOAT2 uv = {};
-	bool has_texture = false;
+	DirectX::XMFLOAT3 postion = {};		/// 頂点のローカル座標
+	Color color = {};					/// 頂点の色
+	DirectX::XMFLOAT2 uv = {};			/// テクスチャのUV座標（※Uを横、Vを縦とする）
 };
 
+/// <summary>
+/// Direct3Dを管理するための名前空間
+/// </summary>
 namespace DirectX3DManager {
 
 	void InitDirectX3D();
@@ -42,6 +53,9 @@ namespace DirectX3DManager {
 
 }
 
+/// <summary>
+/// シェーダーを管理するための名前空間
+/// </summary>
 namespace ShaderManager {
 
 	inline ID3D11VertexShader* vertexShader_ = nullptr;
