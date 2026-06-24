@@ -46,7 +46,7 @@ void ObjectManager::UpdateManager() {
 
 void ObjectManager::UpdateCollider() {
     for (int n = 0; n < objList.size(); n++) {
-        for (int i = 1; i < objList.size(); n++) {
+        for (int i = 1; i < objList.size(); i++) {
             auto obj1 = objList[n];
             auto obj2 = objList[i];
             
