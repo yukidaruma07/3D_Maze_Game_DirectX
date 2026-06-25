@@ -42,33 +42,32 @@ void FBX::Init() {
 	FbxNode* node = rootNode->GetChild(0); //結合済み前提
 	FbxMesh* mesh = node->GetMesh();
 
-	vertexCount_ = mesh->GetControlPointsCount();
-	polygonCount_ = mesh->GetPolygonCount();
-	materialCount_ = node->GetMaterialCount();
+	vertexCount_ = mesh->GetControlPointsCount();	//頂点数を取得する
+	polygonCount_ = mesh->GetPolygonCount();		//ポリゴンを取得する
+	materialCount_ = node->GetMaterialCount();		//マテリアルを取得する
 
-	InitVertex(mesh);
-	InitIndex(mesh);
-	InitConstantBuffer();
-	InitMaterial(node);
+	InitVertex(mesh);		//頂点バッファを初期化する
+	InitIndex(mesh);		//インデックスバッファを初期化する
+	InitConstantBuffer();	//コンスタントバッファ（GPUに送るデータ）を初期化する
+	InitMaterial(node);		//マテリアルを初期化する
 }
 
 void FBX::InitVertex(FbxMesh* mesh) {
-	vertices_ = new Vertex[vertexCount_](); //頂点
+	vertices_ = new Vertex[vertexCount_](); //頂点データを代入する
 
-	for (DWORD poly = 0; poly < polygonCount_; poly++) {
-		for (int vertex = 0; vertex < 3; vertex++) {
+	for (DWORD poly = 0; poly < polygonCount_; poly++) {	//ポリゴン分ループする
+		for (int vertex = 0; vertex < 3; vertex++) {		//頂点分ループする（※結合済み前提
 			int index = mesh->GetPolygonVertex(poly, vertex);
-			FbxVector4 pos = mesh->GetControlPointAt(index);
-			vertices_[index].postion.x = (float)pos[0];
-			vertices_[index].postion.y = (float)pos[1];
-			vertices_[index].postion.z = (float)pos[2];
+			FbxVector4 pos = mesh->GetControlPointAt(index);	//頂点座標を取得する
+			vertices_[index].postion.x = (float)pos[0];			//頂点のX座標を代入する
+			vertices_[index].postion.y = (float)pos[1];			//頂点のY座標を代入する
+			vertices_[index].postion.z = (float)pos[2];			//頂点のZ座標を代入する
 
 			FbxLayerElementUV* uvLayer = mesh->GetLayer(0)->GetUVs();
 			int uvIndex = mesh->GetTextureUVIndex(poly, vertex);
-			FbxVector2 uv = uvLayer->GetDirectArray().GetAt(uvIndex);
-
-			vertices_[index].uv.x = (float)uv.mData[0];
-			vertices_[index].uv.y = (float)(1.0f - uv.mData[1]);
+			FbxVector2 uv = uvLayer->GetDirectArray().GetAt(uvIndex);	//UV座標を取得する
+			vertices_[index].uv.x = (float)uv.mData[0];					//UV座標の横軸を代入する
+			vertices_[index].uv.y = (float)(1.0f - uv.mData[1]);		//UV座標の縦軸を代入する
 		}
 	}
 
@@ -78,9 +77,9 @@ void FBX::InitVertex(FbxMesh* mesh) {
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = vertices_;
+	data.pSysMem = vertices_;			//頂点データ
 
-	HRESULT hr = GetDevice()->CreateBuffer(&bd, &data, &pVertexBuffer_);
+	HRESULT hr = GetDevice()->CreateBuffer(&bd, &data, &pVertexBuffer_);	//頂点バッファを作成する
 }
 
 void FBX::InitIndex(FbxMesh* mesh) {
@@ -109,7 +108,7 @@ void FBX::InitIndex(FbxMesh* mesh) {
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA data = {};
-		data.pSysMem = index_;
+		data.pSysMem = index_;				//インデックスバッファ
 
 		HRESULT hr = GetDevice()->CreateBuffer(&bd, &data, &pIndexBuffer_[i]);
 	}
@@ -125,7 +124,7 @@ void FBX::InitConstantBuffer() {
 
 void FBX::InitMaterial(fbxsdk::FbxNode* node) {
 	materials_ = new MATERIAL[materialCount_];
-	for (int i = 0; i < materialCount_; i++) {
+	for (int i = 0; i < materialCount_; i++) {	//マテリアル分ループする
 		FbxSurfaceMaterial* material = node->GetMaterial(i);
 		FbxProperty property = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
 		int fileTextureCount = property.GetSrcObjectCount <FbxFileTexture>();
@@ -133,14 +132,14 @@ void FBX::InitMaterial(fbxsdk::FbxNode* node) {
 		FbxDouble3  diffuse = pMaterial->Diffuse;
 		materials_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
 
-		if (fileTextureCount > 0) {
+		if (fileTextureCount > 0) {	//　マテリアルにテクスチャがある場合
 			FbxFileTexture* textureInfo = property.GetSrcObject<FbxFileTexture>();
-			const char* texturePath = textureInfo->GetFileName();
-			materials_[i].texture = new Texture(texturePath, -0.5f, 0.5f);
+			const char* texturePath = textureInfo->GetFileName();			
+			materials_[i].texture = new Texture(texturePath, -0.5f, 0.5f);	//　テクスチャデータを代入する
 			materials_[i].texture->Init();
 		}
-		else {
-			materials_[i].texture = nullptr;
+		else {	// マテリアルにテクスチャがない場合
+			materials_[i].texture = nullptr;	// 無いので、nullptrにする
 		}
 	}
 }
