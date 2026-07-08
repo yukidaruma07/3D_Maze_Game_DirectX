@@ -1,5 +1,11 @@
 #include "AudioManager.h"
 
+namespace AudioManager {
+    inline IXAudio2* audio = nullptr;
+    inline IXAudio2MasteringVoice* masteringVoice = nullptr;
+    inline std::vector<AudioData> audioList;
+}
+
 void AudioManager::InitManager() {
     XAudio2Create(&audio);
     audio->CreateMasteringVoice(&masteringVoice);
@@ -80,6 +86,10 @@ void AudioManager::Play(int id) {
 }
 
 void AudioManager::Stop(int id) {
-    audioList[id].sourceVoice[0]->Stop();
-    audioList[id].sourceVoice[0]->FlushSourceBuffers();
+    audioList[id].sourceVoice[0]->Stop();                               // 再生を止めるだけ
+    audioList[id].sourceVoice[0]->FlushSourceBuffers(); // キューから完全に削除する
+}
+
+void AudioManager::ChangeVolume(int id, int volume) {
+    audioList[id].sourceVoice[0]->SetVolume(volume);
 }
