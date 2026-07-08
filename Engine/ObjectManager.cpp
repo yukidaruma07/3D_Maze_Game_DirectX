@@ -1,16 +1,10 @@
 #include "ObjectManager.h"
 #include "CircleCollider.h"
 
-void ObjectManager::InitManager() {
-    for (int n = 0; n < objList.size(); n++) {
-        BaseObject* obj = objList[n];
-        if (obj == nullptr) continue;
-        obj->Init();
-    }
-}
-
-void ObjectManager::AddObject(BaseObject* obj) {
+BaseObject* ObjectManager::AddObject(BaseObject* obj) {
     objList.push_back(obj);
+    obj->Init();
+    return obj;
 }
 
 void ObjectManager::RemoveObject(BaseObject* obj) {
@@ -56,8 +50,10 @@ void ObjectManager::UpdateCollider() {
             
             bool isHit = false;
             for (CircleCollider* cirlceCol1 : obj1->GetColiderList()) {
+                cirlceCol1->Update();
                 for (CircleCollider* cirlceCol2 : obj2->GetColiderList()) {
-                    isHit = cirlceCol1->IsCircle(cirlceCol2);
+                    cirlceCol2->Update();
+                    isHit = cirlceCol1->IsCircle(cirlceCol2) && cirlceCol2->IsCircle(cirlceCol1);
                 }
             }
 

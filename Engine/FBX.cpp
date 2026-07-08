@@ -1,4 +1,4 @@
-#include "FBX.h"
+﻿#include "FBX.h"
 #include "fbxsdk.h"
 #include "DirectX3DManager.h"
 #include "BootScene.h"
@@ -7,6 +7,9 @@
 #include "../ImGUI/imgui.h"
 #include "CameraManager.h"
 #include "../GameEngine.hpp"
+#include "LoggerManager.h"
+#include <DirectXCollision.h>
+
 using namespace DirectX3DManager;
 
 using namespace fbxsdk;
@@ -15,16 +18,15 @@ using namespace DirectX;
 FBX::FBX(const std::string fName)
 	: BaseObject("FBX") {
 	this->path_ = fName;
-	isShowTexture_ = true;
+	isShowTexture_ = false;
 	indexCount_ = -1;
 	materialCount_ = -1;
 	polygonCount_ = -1;
 	vertexCount_ = -1;
-	materials_ = nullptr;
-	pConstantBuffer_ = nullptr;
+	materials_.clear();
 	pIndexBuffer_ = nullptr;
 	pVertexBuffer_ = nullptr;
-	vertices_ = nullptr;
+	vertices_.clear();
 }
 
 FBX::~FBX() {
@@ -36,40 +38,67 @@ void FBX::Init() {
 	fbxImporter_->Initialize(path_.c_str(), -1, fbxManager_->GetIOSettings());
 	FbxScene* fbxScene = FbxScene::Create(fbxManager_, "fbxscene");
 	fbxImporter_->Import(fbxScene);
-	fbxImporter_->Destroy();
+
+	FbxGeometryConverter converter(fbxManager_);
+	converter.Triangulate(fbxScene, true);	// fbxを三角化する
 
 	FbxNode* rootNode = fbxScene->GetRootNode();
 	FbxNode* node = rootNode->GetChild(0); //結合済み前提
-	FbxMesh* mesh = node->GetMesh();
+	FbxMesh* mesh = nullptr;
+	for (int i = 0; i < rootNode->GetChildCount(); i++) {	// 根っこから子ノードをループする
+		FbxNode* childNode = rootNode->GetChild(i);	// 子ノード
+		if (childNode->GetMesh() != nullptr) {	// メッシュがnullじゃなくなるまで
+			mesh = childNode->GetMesh();	// メッシュを代入
+			node = childNode;	// メッシュがnullじゃないときの、ノードを代入する
+			break;
+		}
+	}
 
 	vertexCount_ = mesh->GetControlPointsCount();	//頂点数を取得する
 	polygonCount_ = mesh->GetPolygonCount();		//ポリゴンを取得する
 	materialCount_ = node->GetMaterialCount();		//マテリアルを取得する
+	indexMaterialCount_.resize(materialCount_);
 
 	InitVertex(mesh);		//頂点バッファを初期化する
 	InitIndex(mesh);		//インデックスバッファを初期化する
 	InitConstantBuffer();	//コンスタントバッファ（GPUに送るデータ）を初期化する
 	InitMaterial(node);		//マテリアルを初期化する
+	InitSkeleton(mesh);
 }
 
 void FBX::InitVertex(FbxMesh* mesh) {
-	vertices_ = new Vertex[vertexCount_](); //頂点データを代入する
+
+	FbxNode* node = mesh->GetNode();
+
+	FbxLayer* layer = mesh->GetLayer(0);
+	FbxLayerElementMaterial* matLayer = layer->GetMaterials();
+	FbxLayerElement::EMappingMode mapping = matLayer->GetMappingMode();
+
 
 	for (DWORD poly = 0; poly < polygonCount_; poly++) {	//ポリゴン分ループする
-		for (int vertex = 0; vertex < 3; vertex++) {		//頂点分ループする（※結合済み前提
-			int index = mesh->GetPolygonVertex(poly, vertex);
-			FbxVector4 pos = mesh->GetControlPointAt(index);	//頂点座標を取得する
-			vertices_[index].postion.x = (float)pos[0];			//頂点のX座標を代入する
-			vertices_[index].postion.y = (float)pos[1];			//頂点のY座標を代入する
-			vertices_[index].postion.z = (float)pos[2];			//頂点のZ座標を代入する
+		for (int vertexCount = 0; vertexCount < 3; vertexCount++) {		//頂点分ループする（※結合済み前提
+			Vertex vertex = {};
+
+			int index = mesh->GetPolygonVertex(poly, vertexCount);
+			FbxVector4 pos = mesh->GetControlPointAt(index);	//頂点座標（ローカル）
+
+			LoggerManager::InfoDebug(fbxImporter_->GetFileName().Buffer());
+			LoggerManager::InfoDebug(std::to_string(vertexCount) + "ローカル座標：" + std::to_string((float)pos[0]) + "," + std::to_string((float)pos[1]) + "," + std::to_string((float)pos[2]));
+
+			vertex.postion.x = (float)pos[0];			//頂点のX座標を代入する
+			vertex.postion.y = (float)pos[1];			//頂点のY座標を代入する
+			vertex.postion.z = (float)pos[2];			//頂点のZ座標を代入する
 
 			FbxLayerElementUV* uvLayer = mesh->GetLayer(0)->GetUVs();
-			int uvIndex = mesh->GetTextureUVIndex(poly, vertex);
+			int uvIndex = mesh->GetTextureUVIndex(poly, vertexCount);
 			FbxVector2 uv = uvLayer->GetDirectArray().GetAt(uvIndex);	//UV座標を取得する
-			vertices_[index].uv.x = (float)uv.mData[0];					//UV座標の横軸を代入する
-			vertices_[index].uv.y = (float)(1.0f - uv.mData[1]);		//UV座標の縦軸を代入する
+			vertex.uv.x = (float)uv.mData[0];					//UV座標の横軸を代入する
+			vertex.uv.y = (float)(1.0f - uv.mData[1]);		//UV座標の縦軸を代入する
+
+			vertices_.push_back(vertex);
 		}
 	}
+	vertexCount_ = vertices_.size();
 
 	D3D11_BUFFER_DESC bd = {};
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -77,14 +106,14 @@ void FBX::InitVertex(FbxMesh* mesh) {
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = vertices_;			//頂点データ
+	data.pSysMem = vertices_.data();			//頂点データ
 
 	HRESULT hr = GetDevice()->CreateBuffer(&bd, &data, &pVertexBuffer_);	//頂点バッファを作成する
 }
 
 void FBX::InitIndex(FbxMesh* mesh) {
 	pIndexBuffer_ = new ID3D11Buffer*[materialCount_];
-	index_ = new int[polygonCount_ * 3];
+	index_.resize((size_t) polygonCount_ * 3);
 
 	for (int i = 0; i < materialCount_; i++) {
 		int count = 0;
@@ -95,35 +124,41 @@ void FBX::InitIndex(FbxMesh* mesh) {
 
 			if (materialId == i) {
 				for (DWORD vertex = 0; vertex < 3; vertex++) {
-					index_[count] = mesh->GetPolygonVertex(poly, vertex);
+					index_[i].push_back(poly * 3 + vertex);
 					count++;
 				}
 			}
 
 		}
 
+		indexMaterialCount_[i] = count;
+
 		D3D11_BUFFER_DESC bd = {};
-		bd.ByteWidth = sizeof(int) * polygonCount_ * 3;
+		bd.ByteWidth = sizeof(int) * count;
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA data = {};
-		data.pSysMem = index_;				//インデックスバッファ
+		data.pSysMem = index_[i].data();				//インデックスバッファ
 
 		HRESULT hr = GetDevice()->CreateBuffer(&bd, &data, &pIndexBuffer_[i]);
 	}
 }
 
 void FBX::InitConstantBuffer() {
-	D3D11_BUFFER_DESC constantBufferDesc = {};
-	constantBufferDesc.ByteWidth = sizeof(ConstantBuffer);
-	constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	HRESULT hr = GetDevice()->CreateBuffer(&constantBufferDesc, nullptr, &pConstantBuffer_);
+	pMaterialConstantBuffers_.resize(materialCount_);
+	for (int i = 0; i < materialCount_; i++) {
+		D3D11_BUFFER_DESC constantBufferDesc = {};
+		constantBufferDesc.ByteWidth = sizeof(ConstantBuffer);
+		constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		HRESULT hr = GetDevice()->CreateBuffer(&constantBufferDesc, nullptr, &pMaterialConstantBuffers_[i]);
+	}
 }
 
 void FBX::InitMaterial(fbxsdk::FbxNode* node) {
-	materials_ = new MATERIAL[materialCount_];
+	materials_.resize(materialCount_);	// vectorをmaterialcount分に変更
+
 	for (int i = 0; i < materialCount_; i++) {	//マテリアル分ループする
 		FbxSurfaceMaterial* material = node->GetMaterial(i);
 		FbxProperty property = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
@@ -144,21 +179,27 @@ void FBX::InitMaterial(fbxsdk::FbxNode* node) {
 	}
 }
 
+void FBX::InitSkeleton(fbxsdk::FbxMesh* mesh) {
+	FbxDeformer* pDeformer = mesh->GetDeformer(0);
+	if (pDeformer == nullptr) return;
+	pSkinInfo_ = (FbxSkin*)pDeformer;
+}
+
 void FBX::Update() {
+	auto currentCamera = CameraManager::getCurentCamera();
 	XMMATRIX scaleMat = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
 	XMMATRIX rotMat = XMMatrixRotationZ(rotation_.z) * XMMatrixRotationX(rotation_.x) * XMMatrixRotationY(rotation_.y);
 	XMMATRIX transMat = XMMatrixTranslation(postion_.x, postion_.y, postion_.z);
-	XMMATRIX world = scaleMat * rotMat * transMat;
-	XMMATRIX view = CameraManager::getCurentCamera()->getMatrix();
-	XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
+	world_ = scaleMat * rotMat * transMat;
+	XMMATRIX view = currentCamera->getMatrix();
+	XMMATRIX projection = currentCamera->GetProjection();
 
-	ConstantBuffer cb = {};
 	for (int i = 0; i < materialCount_; i++) {
-		auto material = materials_[i];
-		cb.wvpMat = XMMatrixTranspose(world * view * projection);
-		cb.diffUse = material.diffuse;
-		cb.isTexture = material.texture != nullptr ? TRUE : FALSE;
-		GetContext()->UpdateSubresource(pConstantBuffer_, 0, nullptr, &cb, 0, 0);
+		ConstantBuffer cb = {};
+		cb.wvpMat = XMMatrixTranspose(world_ * view * projection);
+		cb.diffUse = materials_[i].diffuse;
+		cb.isTexture = materials_[i].texture != nullptr ? TRUE : FALSE;
+		GetContext()->UpdateSubresource(pMaterialConstantBuffers_[i], 0, nullptr, &cb, 0, 0);
 	}
 
 }
@@ -168,18 +209,21 @@ void FBX::Draw() {
 	UINT offset = 0;
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 
+	GetContext()->RSSetState(GetRasterizer());
+	GetContext()->IASetInputLayout(ShaderManager::inputLayout_);
+	GetContext()->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	GetContext()->VSSetShader(ShaderManager::vertexShader_, nullptr, 0);
 	GetContext()->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
-	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	GetContext()->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+		
 	for (int i = 0; i < materialCount_; i++) {
+		GetContext()->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
 		if (!isShowTexture_) {
 			GetContext()->PSSetShaderResources(0, 1, nullSRV);
-			GetContext()->PSSetShader(ShaderManager::pixelDebugShader_, nullptr, 0);
+			GetContext()->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
 		}
 		else {
 			if (materials_[i].texture != nullptr) {
-				GetContext()->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
 				auto srv = (materials_[i].texture->GetShaderReasourceView());
 				auto samplerState = materials_[i].texture->GetSampleState();
 				GetContext()->PSSetShaderResources(0, 1, &srv);
@@ -190,14 +234,48 @@ void FBX::Draw() {
 			}
 		}
 
-		GetContext()->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
+		GetContext()->PSSetConstantBuffers(0, 1, &pMaterialConstantBuffers_[i]);
+		GetContext()->VSSetConstantBuffers(0, 1, &pMaterialConstantBuffers_[i]);
+		
+		GetContext()->DrawIndexed(indexMaterialCount_[i], 0, 0);
 
-		GetContext()->RSSetState(GetRasterizer());
-		GetContext()->DrawIndexed(polygonCount_ * 3, 0, 0);
-		GetContext()->RSSetState(nullptr);
+		
 	}
+	GetContext()->RSSetState(nullptr);
 }
 
 void FBX::Release() {
 
+}
+
+bool FBX::Raycast(FBX* fbx, DirectX::XMFLOAT3 rayPos, DirectX::XMFLOAT3 rayDir, float& distance) {
+	auto rayOrigin = DirectX::XMLoadFloat3(&rayPos);
+	auto rayDirection = DirectX::XMLoadFloat3(&rayDir);
+
+	bool hit = false;
+
+	for (int v = 0; v < fbx->vertexCount_; v += 3) {
+		auto vertex0 = DirectX::XMLoadFloat3(&fbx->vertices_[v].postion);
+		auto vertex1 = DirectX::XMLoadFloat3(&fbx->vertices_[v + 1].postion);
+		auto vertex2 = DirectX::XMLoadFloat3(&fbx->vertices_[v + 2].postion);
+
+		vertex0 = XMVector3TransformCoord(vertex0, fbx->world_);
+		vertex1 = XMVector3TransformCoord(vertex1, fbx->world_);
+		vertex2 = XMVector3TransformCoord(vertex2, fbx->world_);
+
+		float dis;
+		if (DirectX::TriangleTests::Intersects(
+			rayOrigin,
+			rayDirection,
+			vertex0,
+			vertex1,
+			vertex2,
+			dis))
+		{
+			distance = dis;
+			hit = true;
+		}
+	}
+
+	return hit;
 }

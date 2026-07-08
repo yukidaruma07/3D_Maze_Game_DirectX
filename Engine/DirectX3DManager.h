@@ -11,7 +11,9 @@
 struct ConstantBuffer {
 	DirectX::XMMATRIX wvpMat = DirectX::XMMatrixIdentity(); /// World行列、View行列、Projection行列を合わせた行列
 	DirectX::XMFLOAT4 diffUse = {};							/// マテリアルの色
-	bool isTexture;											/// テクスチャがあるか
+	int isTexture;											/// テクスチャがあるか
+	int isGray;											/// グレーにするか
+	int padding[2];
 };
 
 /// <summary>
@@ -50,6 +52,7 @@ namespace DirectX3DManager {
 	ID3D11RenderTargetView* GetRenderTargetView();
 	ID3D11Texture2D* GetTexture2D();
 	ID3D11RasterizerState* GetRasterizer();
+	ID3D11DepthStencilView* GetDepthView();
 
 }
 
@@ -61,6 +64,7 @@ namespace ShaderManager {
 	inline ID3D11VertexShader* vertexShader_ = nullptr;
 	inline ID3D11PixelShader* pixelShader_ = nullptr;
 	inline ID3D11PixelShader* pixelDebugShader_ = nullptr;
+	inline ID3D11PixelShader* grayPixelShader_ = nullptr;
 	inline ID3D11InputLayout* inputLayout_ = nullptr;
 
 	void InitShader();

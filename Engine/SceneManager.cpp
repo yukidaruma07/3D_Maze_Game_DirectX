@@ -27,7 +27,6 @@ namespace SceneManager {
 				currentScene = scene;
 				ObjectManager::ClearObject();
 				currentScene->Init();
-				ObjectManager::InitManager();
 				break;
 			}
 		}

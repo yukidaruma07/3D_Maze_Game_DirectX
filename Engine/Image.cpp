@@ -31,6 +31,7 @@ Image::Image(const std::string& path, const float leftX, const float leftY)
 	vertices_[4] = { {leftX, leftY, 0.0f }, { 1,1,0,1 }, { 1, 1 } }; // 右下
 	vertices_[5] = { {0.0f, leftY, 0.0f}, {1,0,0,1}, {0, 1} }; // 左下
 
+	isGray_ = false;
 }
 
 void Image::Init() {
@@ -87,11 +88,10 @@ void Image::Init() {
 	textureData.pSysMem = TextureData.data();
 	textureData.SysMemPitch = static_cast<UINT>(rowBytes);
 
-	auto texture2D = GetTexture2D();
 	GetDevice()->CreateTexture2D(
 		&desc,
 		&textureData,
-		&texture2D
+		&texture2D_
 	);
 
 	// 参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_shader_resource_view_desc
@@ -99,7 +99,7 @@ void Image::Init() {
 	viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	viewDesc.Texture2D.MipLevels = 1;
-	GetDevice()->CreateShaderResourceView(texture2D, &viewDesc, &shaderResourceView_);
+	GetDevice()->CreateShaderResourceView(texture2D_, &viewDesc, &shaderResourceView_);
 
 	// 参考： https://learn.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_sampler_desc
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -140,15 +140,17 @@ void Image::Update() {
 	XMMATRIX rotMat = XMMatrixRotationZ(rotation_.z) * XMMatrixRotationX(rotation_.x) * XMMatrixRotationY(rotation_.y);
 	XMMATRIX transMat = XMMatrixTranslation(postion_.x, postion_.y, postion_.z);
 	XMMATRIX world = scaleMat * rotMat * transMat;
-	XMMATRIX view = camera->getMatrix();
+	XMMATRIX view = XMMatrixIdentity();
 	XMMATRIX projection = XMMatrixOrthographicOffCenterLH(
 		0.0f, 1280.0f,
 		720.0f, 0.0f,
 		0.0f, 100.0f
 	);
-
 	ConstantBuffer cb = {};
 	cb.wvpMat = XMMatrixTranspose(world * view * projection);
+	cb.diffUse = { 1.0f, 0.0f, 0.0f, 1.0f };
+	cb.isTexture = true;
+	cb.isGray = isGray_;
 	GetContext()->UpdateSubresource(constantBuffer_, 0, nullptr, &cb, 0, 0);
 }
 
@@ -165,6 +167,7 @@ void Image::Draw() {
 	GetContext()->PSSetShaderResources(0, 1, &shaderResourceView_);
 	GetContext()->PSSetSamplers(0, 1, &samplerState_);
 	GetContext()->VSSetConstantBuffers(0, 1, &constantBuffer_);
+	GetContext()->PSSetConstantBuffers(0, 1, &constantBuffer_);
 
 	GetContext()->Draw(6, 0);
 
