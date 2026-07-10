@@ -1,8 +1,10 @@
 #pragma once
 #include "BaseScene.h"
+#include "CSVRender.h"
 
 class BootScene : public BaseScene {
 private:
+    CSVRender* csv_;
 public:
     BootScene();
     ~BootScene();

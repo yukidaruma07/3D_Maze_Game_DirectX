@@ -7,9 +7,12 @@
 #include "Box.h"
 #include "SceneManager.h"
 #include "../Ground.h"
+#include "../Player.h"
+#include "CSVRender.h"
 
 BootScene::BootScene()
 	: BaseScene("BootScene") {
+	csv_ = nullptr;
 }
 
 BootScene::~BootScene() {
@@ -32,6 +35,9 @@ void BootScene::Init() {
 	//ObjectManager::AddObject(new Box(Color::GetRed(), 64, 64));
 	ObjectManager::AddObject(new Ground());
 	ObjectManager::AddObject(new Player({0, 0, 0}));
+
+	csv_ = (new CSVRender("asset/map.csv"));
+	csv_->Init();
 }
 
 void BootScene::Update() {
