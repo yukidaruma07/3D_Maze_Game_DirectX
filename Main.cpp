@@ -48,6 +48,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CameraManager::addCamera("RootCamera");
 	CameraManager::setCurentCamera("RootCamera");
 
+	Camera* currentCamera = CameraManager::getCurentCamera();
+	currentCamera->SetProjection(DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f));
+
 	MSG msg = {};
 	while (msg.message != WM_QUIT) {
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
@@ -56,8 +59,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 		else {
 			auto renderTargetView = GetRenderTargetView();
-			GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
+			GetContext()->OMSetRenderTargets(1, &renderTargetView, GetDepthView());
 			GetContext()->ClearRenderTargetView(renderTargetView, GameEngine::BACKGROUND_COLOR);
+			GetContext()->ClearDepthStencilView(GetDepthView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 			static DWORD beforeTime = timeGetTime();
 			DWORD now = timeGetTime();

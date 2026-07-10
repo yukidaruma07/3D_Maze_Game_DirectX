@@ -87,6 +87,12 @@
     <ClCompile Include="Engine\Box.cpp">
       <Filter>Engine\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGUI\imgui.h">
@@ -182,6 +188,12 @@
     <ClInclude Include="Engine\Box.h">
       <Filter>Engine\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -204,6 +216,15 @@
     </Filter>
     <Filter Include="Engine\Scene">
       <UniqueIdentifier>{501adf3f-be7b-482f-84fe-f81ab2ceef17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{efdaf0d5-f674-4593-aea1-9e1e1da5ab6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scene">
+      <UniqueIdentifier>{6952a405-b05a-43c1-a965-e6028bee8a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Object">
+      <UniqueIdentifier>{5fb48e5d-ecba-47e9-a1db-6aed58e17665}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

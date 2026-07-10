@@ -18,7 +18,7 @@ using namespace DirectX;
 FBX::FBX(const std::string fName)
 	: BaseObject("FBX") {
 	this->path_ = fName;
-	isShowTexture_ = false;
+	isShowTexture_ = true;
 	indexCount_ = -1;
 	materialCount_ = -1;
 	polygonCount_ = -1;
