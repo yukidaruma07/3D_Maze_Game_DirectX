@@ -31,6 +31,7 @@ void BootScene::Init() {
 	//ObjectManager::AddObject(new FBX("Oden.fbx"));
 	//ObjectManager::AddObject(new Box(Color::GetRed(), 64, 64));
 	ObjectManager::AddObject(new Ground());
+	ObjectManager::AddObject(new Player({0, 0, 0}));
 }
 
 void BootScene::Update() {
