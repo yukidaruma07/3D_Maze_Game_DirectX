@@ -5,8 +5,8 @@
 namespace {
 	Block* block = nullptr;
 
-	const float minX = 0.0f;
-	const float minZ = 0.0f;
+	const float minX = -5.8f;
+	const float minZ = -4.5f;
 	const float blockSize = 1.2f;
 
 	std::vector<std::vector<int>> localMapData = {
