@@ -49,6 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CameraManager::setCurentCamera("RootCamera");
 
 	Camera* currentCamera = CameraManager::getCurentCamera();
+	currentCamera->setCameraPostion({0, 20, -5});
 	currentCamera->SetProjection(DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f));
 
 	MSG msg = {};
