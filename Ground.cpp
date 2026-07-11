@@ -6,7 +6,7 @@ namespace {
 	Block* block = nullptr;
 
 	const float minX = 0.0f;
-	const float minY = 0.0f;
+	const float minZ = 0.0f;
 	const float blockSize = 1.2f;
 
 	std::vector<std::vector<int>> localMapData = {
@@ -56,9 +56,9 @@ void Ground::Draw() {
 	}
 
 	for (int x = 0; x < localMapData.at(0).size(); x++) {
-		for (int y = 0; y < localMapData.size(); y++) {
-			if (localMapData.at(y).at(x) == 1) {
-				block->SetPosition({minX + blockSize * x, minY + blockSize * y, 0});
+		for (int z = 0; z < localMapData.size(); z++) {
+			if (localMapData.at(z).at(x) == 1) {
+				block->SetPosition({minX + blockSize * x, 0, minZ + blockSize * z});
 				block->Update();
 				block->Draw();
 			}

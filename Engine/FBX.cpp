@@ -86,8 +86,8 @@ void FBX::InitVertex(FbxMesh* mesh) {
 			LoggerManager::InfoDebug(std::to_string(vertexCount) + "ローカル座標：" + std::to_string((float)pos[0]) + "," + std::to_string((float)pos[1]) + "," + std::to_string((float)pos[2]));
 
 			vertex.postion.x = (float)pos[0];			//頂点のX座標を代入する
-			vertex.postion.y = (float)pos[1];			//頂点のY座標を代入する
-			vertex.postion.z = (float)pos[2];			//頂点のZ座標を代入する
+			vertex.postion.y = (float)pos[2];			//頂点のY座標を代入する
+			vertex.postion.z = (float)pos[1];			//頂点のZ座標を代入する
 
 			FbxLayerElementUV* uvLayer = mesh->GetLayer(0)->GetUVs();
 			int uvIndex = mesh->GetTextureUVIndex(poly, vertexCount);
