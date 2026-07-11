@@ -1,8 +1,9 @@
 
 # 概要
 
-# 動作イメージ（2026/7/11時点）
-<img width="2230" height="1284" alt="{8EFD6693-4299-435C-9832-14743206273A}" src="https://github.com/user-attachments/assets/af839c17-4db1-4790-b1fc-b64ac8a0b4dc" />
+# 動作イメージ（2026/7/12時点）
+<img width="1249" height="697" alt="image" src="https://github.com/user-attachments/assets/0c1ed109-1134-47ce-b125-8fb6636b0ad1" />
+
 
 # ライセンス
 * MIT License
