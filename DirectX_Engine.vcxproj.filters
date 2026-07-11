@@ -96,6 +96,9 @@
     <ClCompile Include="Engine\CSVRender.cpp">
       <Filter>Engine\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGUI\imgui.h">
@@ -199,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Engine\CSVRender.h">
       <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>Source\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

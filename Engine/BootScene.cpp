@@ -9,6 +9,7 @@
 #include "../Ground.h"
 #include "../Player.h"
 #include "CSVRender.h"
+#include "../Block.h"
 
 BootScene::BootScene()
 	: BaseScene("BootScene") {
@@ -35,6 +36,7 @@ void BootScene::Init() {
 	//ObjectManager::AddObject(new Box(Color::GetRed(), 64, 64));
 	ObjectManager::AddObject(new Ground());
 	ObjectManager::AddObject(new Player({0, 0, 0}));
+	ObjectManager::AddObject(new Block());
 
 	csv_ = (new CSVRender("asset/map.csv"));
 	csv_->Init();
