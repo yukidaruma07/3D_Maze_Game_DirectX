@@ -40,13 +40,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	initializeWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	InputManager::initialize(hInstance, GameEngine::GetWindowHandle());
 	DirectX3DManager::InitDirectX3D();
+
+	CameraManager::addCamera("RootCamera");
+	CameraManager::setCurentCamera("RootCamera");
+
+	CameraManager::addCamera("PlayerCamera");
+
 	initializeImGUI();
 	DirectX2DManager::Init();
 	ShaderManager::InitShader();
 	SceneManager::InitManager();
 	AudioManager::InitManager();
-	CameraManager::addCamera("RootCamera");
-	CameraManager::setCurentCamera("RootCamera");
 
 	Camera* currentCamera = CameraManager::getCurentCamera();
 	currentCamera->setCameraPostion({0, 20, -5});

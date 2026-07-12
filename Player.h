@@ -6,6 +6,7 @@
 class Player : public BaseObject {
 private:
 	FBX* fbx_;
+	int cameraType_;
 public:
 
 	Player(DirectX::XMFLOAT3 postion);
