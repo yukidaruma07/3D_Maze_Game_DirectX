@@ -2,8 +2,7 @@
 # 概要
 
 # 動作イメージ（2026/7/12時点）
-<img width="1217" height="701" alt="image" src="https://github.com/user-attachments/assets/c286e31f-dc5c-447f-a562-9f8d43f35f3d" />
-
+<img width="1222" height="708" alt="image" src="https://github.com/user-attachments/assets/bbb433df-135c-48c0-b327-28ce4543b6b8" />
 
 # ライセンス
 * MIT License
