@@ -13,7 +13,7 @@ namespace {
 class Ground : public BaseObject {
 private:
 	Block* block_ = nullptr;
-	std::vector<std::vector<int>> localMapData_;
+	std::vector<std::vector<std::vector<int>>> localMapData_;
 public:
 	Ground();
 	~Ground();
@@ -23,7 +23,7 @@ public:
 	void Draw() override;
 	void Release() override;
 
-	std::vector<std::vector<int>>& GetLocalMapData() { return localMapData_; };
+	std::vector<std::vector<std::vector<int>>>& GetLocalMapData() { return localMapData_; };
 
 
 };

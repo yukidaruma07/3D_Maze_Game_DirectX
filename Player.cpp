@@ -65,17 +65,10 @@ void Player::Update() {
 	int pRightZ = static_cast<int>(
 		std::floor((XMVectorGetZ(nextPos) - GROUND_MAXZ + BLOCK_SIZE) / BLOCK_SIZE));
 
-
 	auto& mapData = ground->GetLocalMapData();
+	int pY = mapData.size() - 1 - static_cast<int>(std::floor(postion_.y / BLOCK_SIZE));
 
-	LoggerManager::InfoDebug(
-		"x=" + std::to_string(postion_.x) + "," +
-		"x=" + std::to_string(XMVectorGetX(nextPos)) + "[" + std::to_string((int)pLeftX) + "]" +
-		"x=" + std::to_string(postion_.z) + "," +
-		"z=" + std::to_string(XMVectorGetZ(nextPos)) + "[" + std::to_string((int)pLeftZ) + "]" + "="
-		" map=" + std::to_string(mapData[pLeftZ][pLeftX]));
-
-	if (mapData[pLeftZ][pLeftX] == 0 && mapData[pRightZ][pRightX] == 0) {
+	if (mapData[pY][pLeftZ][pLeftX] == 0 && mapData[pY][pRightZ][pRightX] == 0) {
 		XMStoreFloat3(&postion_, nextPos);
 	}
 
