@@ -76,6 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
+			InputManager::update();
 			SceneManager::UpdateScene();
 			SceneManager::DrawScene();
 			ObjectManager::UpdateManager();

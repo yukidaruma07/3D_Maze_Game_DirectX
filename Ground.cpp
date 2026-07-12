@@ -1,29 +1,19 @@
 #include "Ground.h"
 #include "Block.h"
 #include <vector>
+#include <cmath>
+#include "Engine/LoggerManager.h"
+#include <algorithm>
+
+#undef min
+#undef max
 
 namespace {
-	Block* block = nullptr;
 
-	const float minX = -5.8f;
-	const float minZ = -4.5f;
-	const float blockSize = 1.2f;
-
-	std::vector<std::vector<int>> localMapData = {
-		{1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1},
-		{1, 1, 1, 1, 1, 1, 1, 1}
-	};
 }
 
 Ground::Ground()
 	: BaseObject("Ground") {
-	fbx_ = nullptr;
 }
 
 Ground::~Ground()
@@ -31,36 +21,37 @@ Ground::~Ground()
 }
 
 void Ground::Init() {
-	fbx_ = new FBX("Asset/map.fbx");
-	fbx_->Init();
-	block = new Block();
-	block->Init();
+	block_ = new Block();
+	block_->Init();
+
+	localMapData_.clear();
+	localMapData_ = {
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+	};
 }
 
 void Ground::Update() {
-	if (block != nullptr) {
-		block->Update();
-	}
-
-	if (fbx_ != nullptr) {
-		fbx_->SetPosition(postion_);
-		fbx_->SetRotation(rotation_);
-		fbx_->SetScale(scale_);
-		fbx_->Update();
+	if (block_ != nullptr) {
+		block_->Update();
 	}
 }
 
 void Ground::Draw() {
-	if (fbx_ != nullptr) {
-		fbx_->Draw();
-	}
-
-	for (int x = 0; x < localMapData.at(0).size(); x++) {
-		for (int z = 0; z < localMapData.size(); z++) {
-			if (localMapData.at(z).at(x) == 1) {
-				block->SetPosition({minX + blockSize * x, 0, minZ + blockSize * z});
-				block->Update();
-				block->Draw();
+	for (int x = 0; x < localMapData_[0].size(); x++) {
+		for (int z = 0; z < localMapData_.size(); z++) {
+			if (localMapData_[z][x] == 1) {
+				block_->SetPosition({GROUND_MINX + BLOCK_SIZE * x, 0, GROUND_MAXZ + BLOCK_SIZE * z});
+				block_->Update();
+				block_->Draw();
 			}
 		}
 	}
