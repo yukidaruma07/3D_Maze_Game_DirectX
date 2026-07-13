@@ -63,19 +63,32 @@ void Player::Update() {
 
 	Ground* ground = ObjectManager::GetDrawObject<Ground>();
 
+	const float PLAYER_SIZE = 0.9f;
 	int pLeftX = static_cast<int>(
 		std::floor((XMVectorGetX(nextPos) - GROUND_MINX) / BLOCK_SIZE));
 	int pLeftZ = static_cast<int>(
 		std::floor((XMVectorGetZ(nextPos) - GROUND_MAXZ) / BLOCK_SIZE));
 	int pRightX = static_cast<int>(
-		std::floor((XMVectorGetX(nextPos) - GROUND_MINX + BLOCK_SIZE) / BLOCK_SIZE));
+		std::floor((XMVectorGetX(nextPos) - GROUND_MINX + PLAYER_SIZE) / BLOCK_SIZE));
 	int pRightZ = static_cast<int>(
-		std::floor((XMVectorGetZ(nextPos) - GROUND_MAXZ + BLOCK_SIZE) / BLOCK_SIZE));
+		std::floor((XMVectorGetZ(nextPos) - GROUND_MAXZ + PLAYER_SIZE) / BLOCK_SIZE));
 
 	auto& mapData = ground->GetLocalMapData();
-	int pY = mapData.size() - 1 - static_cast<int>(std::floor(postion_.y / BLOCK_SIZE));
 
-	if (mapData[pY][pLeftZ][pLeftX] == 0 && mapData[pY][pRightZ][pRightX] == 0) {
+	int mapHeight = static_cast<int>(mapData.size());
+	int mapDepth = mapHeight > 0 ? static_cast<int>(mapData[0].size()) : 0;
+	int mapWidth = (mapDepth > 0) ? static_cast<int>(mapData[0][0].size()) : 0;
+
+	int pY = mapHeight - 1 - static_cast<int>(std::floor(XMVectorGetY(nextPos) / BLOCK_SIZE));
+
+	bool canMove = true;
+
+	if (mapData[pY][pLeftZ][pLeftX] != 0) canMove = false;
+	if (mapData[pY][pLeftZ][pRightX] != 0) canMove = false;
+	if (mapData[pY][pRightZ][pLeftX] != 0) canMove = false;
+	if (mapData[pY][pRightZ][pRightX] != 0) canMove = false;
+
+	if (canMove) {
 		XMStoreFloat3(&postion_, nextPos);
 	}
 
@@ -105,6 +118,7 @@ void Player::Update() {
 }
 
 void Player::Draw() {
+
 	if (fbx_ != nullptr) {
 		fbx_->Draw();
 	}
