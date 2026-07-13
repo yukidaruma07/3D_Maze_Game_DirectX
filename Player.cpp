@@ -99,7 +99,7 @@ void Player::Update() {
 		fbx_->Update();
 	}
 
-	if (InputManager::IsPushKey(DIK_F5)) {
+	if (InputManager::IsPushKeyDown(DIK_F5)) {
 		cameraType_++;
 	}
 

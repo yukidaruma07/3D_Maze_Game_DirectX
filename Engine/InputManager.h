@@ -21,6 +21,20 @@ namespace InputManager {
 	bool IsPushKey(int key);
 
 	/// <summary>
+	/// キーボードが離された瞬間かを返す関数
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	bool IsPushKeyUp(int key);
+
+	/// <summary>
+	/// キーボードが押した瞬間かを返す関数
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	bool IsPushKeyDown(int key);
+
+	/// <summary>
 	/// マウスが押されたかを返す関数（※押しっぱなし関係無し）
 	/// </summary>
 	/// <param name="button">マウスのボタンの種類</param>

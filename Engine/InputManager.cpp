@@ -1,5 +1,6 @@
 #include "InputManager.h"
 #include "../GameEngine.hpp"
+#include <array>
 
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -7,7 +8,9 @@
 namespace InputManager {
     inline LPDIRECTINPUT8 input_ = {};
     inline LPDIRECTINPUTDEVICE8 inputDevice_ = {};
-    inline BYTE keys_[256] = {};
+
+    inline std::array<BYTE, 256> beforeKey_ = {};
+    inline std::array<BYTE, 256> keys_ = {};
 
     inline LPDIRECTINPUTDEVICE8 mouseInputDevice_ = {};
     inline DIMOUSESTATE mouseState_ = {};
@@ -30,6 +33,8 @@ int InputManager::initialize(HINSTANCE hInstance, HWND hwnd) {
 }
 
 void InputManager::update() {
+	beforeKey_ = keys_;
+
     inputDevice_->Acquire();
     inputDevice_->GetDeviceState(sizeof(keys_), &keys_);
 
@@ -48,6 +53,20 @@ void InputManager::release() {
 
 bool InputManager::IsPushKey(int key) {
     if (keys_[key] & 0x80) {
+        return true;
+    }
+    return false;
+}
+
+bool InputManager::IsPushKeyUp(int key) {
+	if (beforeKey_[key] & 0x80 && !(keys_[key] & 0x80)) { // 前フレームで押してて、今は押していない（=離した瞬間）
+        return true;
+    }
+    return false;
+}
+
+bool InputManager::IsPushKeyDown(int key) {
+	if (!(beforeKey_[key] & 0x80) && (keys_[key] & 0x80)) { // 前フレームで押していなくて、今は押している（=押した瞬間）
         return true;
     }
     return false;
