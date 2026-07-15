@@ -199,11 +199,11 @@ void FBX::Update() {
 	for (int i = 0; i < materialCount_; i++) {
 		ConstantBuffer cb = {};
 		cb.wvpMat = XMMatrixTranspose(world_ * view * projection);
-		cb.diffUse = materials_[i].diffuse;
-		cb.ambient = materials_[i].ambient;
-		cb.speculer = materials_[i].specular;
-		cb.isTexture = materials_[i].texture != nullptr ? TRUE : FALSE;
-		GetContext()->UpdateSubresource(pMaterialConstantBuffers_[i], 0, nullptr, &cb, 0, 0);
+		cb.diffUse = materials_[i].diffuse;	// ディフューズカラーをコンスタントバッファに代入
+		cb.ambient = materials_[i].ambient; // アンビエントカラーをコンスタントバッファに代入
+		cb.speculer = materials_[i].specular; // スペキュラーをコンスタントバッファに代入
+		cb.isTexture = materials_[i].texture != nullptr ? TRUE : FALSE; // テクスチャフラグをコンスタントバッファに代入
+		GetContext()->UpdateSubresource(pMaterialConstantBuffers_[i], 0, nullptr, &cb, 0, 0); // コンスタントバッファを更新する
 	}
 
 }
@@ -214,36 +214,33 @@ void FBX::Draw() {
 	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 
 	GetContext()->RSSetState(GetRasterizer());
-	GetContext()->IASetInputLayout(ShaderManager::inputLayout_);
-	GetContext()->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
-	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	GetContext()->VSSetShader(ShaderManager::vertexShader_, nullptr, 0);
-	GetContext()->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
+	GetContext()->IASetInputLayout(ShaderManager::inputLayout_);	// 入力レイアウトをセットする
+	GetContext()->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset); // 頂点バッファをセットする
+	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形として描画する
+	GetContext()->VSSetShader(ShaderManager::vertexShader_, nullptr, 0);	// 頂点シェーダーをセットする
+	GetContext()->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);	// ピクセルシェーダーをセットする
 		
-	for (int i = 0; i < materialCount_; i++) {
-		GetContext()->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
-		if (!isShowTexture_) {
-			GetContext()->PSSetShaderResources(0, 1, nullSRV);
-			GetContext()->PSSetShader(ShaderManager::pixelShader_, nullptr, 0);
+	for (int i = 0; i < materialCount_; i++) {	// マテリアル分ループする
+		GetContext()->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0); // インデックスバッファをセットする
+		if (!isShowTexture_) {	// テクスチャを表示しない場合
+			GetContext()->PSSetShaderResources(0, 1, nullSRV); // ピクセルシェーダーに送るリソースはnullptrにする
 		}
-		else {
-			if (materials_[i].texture != nullptr) {
+		else { // テクスチャを表示する場合
+			if (materials_[i].texture != nullptr) { // テクスチャがある
 				auto srv = (materials_[i].texture->GetShaderReasourceView());
 				auto samplerState = materials_[i].texture->GetSampleState();
-				GetContext()->PSSetShaderResources(0, 1, &srv);
-				GetContext()->PSSetSamplers(0, 1, &samplerState);
+				GetContext()->PSSetShaderResources(0, 1, &srv); // ピクセルシェーダーにリソースをセットする
+				GetContext()->PSSetSamplers(0, 1, &samplerState); // ピクセルシェーダーにサンプラーをセットする
 			}
 			else {
-				GetContext()->PSSetShaderResources(0, 1, nullSRV);
+				GetContext()->PSSetShaderResources(0, 1, nullSRV); // ピクセルシェーダーに送るリソースはnullptrにする
 			}
 		}
 
-		GetContext()->PSSetConstantBuffers(0, 1, &pMaterialConstantBuffers_[i]);
-		GetContext()->VSSetConstantBuffers(0, 1, &pMaterialConstantBuffers_[i]);
+		GetContext()->PSSetConstantBuffers(0, 1, &pMaterialConstantBuffers_[i]); // ピクセルシェーダーにコンスタントバッファを送る
+		GetContext()->VSSetConstantBuffers(0, 1, &pMaterialConstantBuffers_[i]); // 頂点シェーダーにコンスタントバッファを送る
 		
-		GetContext()->DrawIndexed(indexMaterialCount_[i], 0, 0);
-
-		
+		GetContext()->DrawIndexed(indexMaterialCount_[i], 0, 0); // 描画する
 	}
 	GetContext()->RSSetState(nullptr);
 }
