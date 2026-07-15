@@ -5,10 +5,10 @@ cbuffer ConstantBuffer : register(b0)
 {
     matrix wvpMat;
     float4 diffUse;
+    float4 ambient;
+    float4 speculer;
     int isTexture;
     int isGray;
-    int padding0;
-    int padding1;
 }
 
 struct PSInput {
@@ -38,5 +38,5 @@ float4 main(PSInput IN) : SV_Target
         diffUse_ = r + g + b;
     }
     
-    return diffUse_;
+    return diffUse_ + diffUse_ * ambient + speculer;
 }

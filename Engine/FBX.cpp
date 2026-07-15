@@ -166,6 +166,8 @@ void FBX::InitMaterial(fbxsdk::FbxNode* node) {
 		FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)node->GetMaterial(i);
 		FbxDouble3  diffuse = pMaterial->Diffuse;
 		materials_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
+		FbxDouble3 ambient = pMaterial->Ambient;
+		materials_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
 
 		if (fileTextureCount > 0) {	//　マテリアルにテクスチャがある場合
 			FbxFileTexture* textureInfo = property.GetSrcObject<FbxFileTexture>();
@@ -198,6 +200,8 @@ void FBX::Update() {
 		ConstantBuffer cb = {};
 		cb.wvpMat = XMMatrixTranspose(world_ * view * projection);
 		cb.diffUse = materials_[i].diffuse;
+		cb.ambient = materials_[i].ambient;
+		cb.speculer = materials_[i].specular;
 		cb.isTexture = materials_[i].texture != nullptr ? TRUE : FALSE;
 		GetContext()->UpdateSubresource(pMaterialConstantBuffers_[i], 0, nullptr, &cb, 0, 0);
 	}
